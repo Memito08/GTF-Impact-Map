@@ -182,6 +182,8 @@ def generate_program_data():
     all_countries = set()
     all_countries.update(big_scholars.keys())
     all_countries.update(gtf_programs.keys())
+
+    print(f"There are {len(all_countries)} countries in total!")
     
     for country in all_countries:
         country_data = {"programs":[]}
