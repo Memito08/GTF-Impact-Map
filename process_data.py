@@ -215,8 +215,6 @@ def write_program_data_json(output_path=Path("data") / "programData.json"):
     """Write programData.json into /data/programData.json"""
     program_data = generate_program_data()
 
-    print(program_data.get("Russian Federation", "Russia not found"))
-
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(output_path, "w", encoding="utf-8") as f:

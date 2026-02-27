@@ -245,6 +245,62 @@
       cursor: pointer;
     }
 
+    .country-callout {
+      position: absolute;
+      display: none;
+      min-width: 180px;
+      padding: 10px 12px;
+      background: rgba(255,255,255,0.96);
+      border: 1px solid rgba(29,51,62,.12);
+      border-radius: 12px;
+      box-shadow: 0 10px 28px rgba(29,51,62,.14);
+      color: var(--navy-primary);
+      z-index: 1500;
+      pointer-events: auto;
+    }
+    .country-callout::before {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: -34px;
+      width: 28px;
+      height: 2px;
+      background: rgba(44,74,90,.72);
+      transform: translateY(-50%);
+    }
+    .country-callout::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: -42px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent-blue);
+      border: 2px solid var(--warm-white);
+      box-shadow: 0 2px 8px rgba(29,51,62,.18);
+      transform: translateY(-50%);
+    }
+    .country-callout-title {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .02em;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+    .country-callout-copy {
+      font-size: 12px;
+      line-height: 1.35;
+      color: var(--navy-secondary);
+    }
+    .country-callout.linkable {
+      cursor: pointer;
+    }
+    .country-callout.linkable:hover {
+      border-color: rgba(43,116,179,.24);
+      box-shadow: 0 12px 32px rgba(29,51,62,.18);
+    }
+
 
     /* Mobile tweaks */
     @media (max-width:768px){
@@ -255,6 +311,11 @@
       .disclaimer-toggle{left:10px;bottom:10px}
       .disclaimer-panel{left:10px;bottom:50px;max-width:calc(100vw - 20px)}
       .stat-number{font-size:18px}
+      .country-callout{min-width:150px;padding:8px 10px}
+      .country-callout::before{left:-26px;width:20px}
+      .country-callout::after{left:-34px}
+      .country-callout-title{font-size:12px}
+      .country-callout-copy{font-size:11px}
     }
     @media (max-width:480px){
       .legend{width:90vw;top:80px;right:5px;padding:18px;max-height:calc(100vh - 105px)}
@@ -262,12 +323,26 @@
       .stats{bottom:5px;left:5px;font-size:11px;padding:8px 10px}
       .disclaimer-toggle{left:8px;bottom:8px;padding:7px 10px;font-size:11px}
       .disclaimer-panel{left:8px;bottom:46px;max-width:calc(100vw - 16px);font-size:11px}
+      .country-callout{
+        min-width:132px;
+        padding:7px 9px;
+      }
+      .country-callout::before{
+        left:-22px;
+        width:16px;
+      }
+      .country-callout::after{
+        left:-30px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="map-app">
     <div id="map"></div>
+    <div id="hkCallout" class="country-callout" aria-hidden="true">
+      <div class="country-callout-title">Hong Kong, China</div>
+    </div>
 
     <!-- Popup container for OpenLayers -->
     <div id="popup" class="ol-popup" style="display:none;">
@@ -340,11 +415,6 @@
       </div>
       <div class="legend-section">
         <div class = "legend-text">Countries and regions with GTF BIG Talent Scholars, GTF Olympiad Grantees, or GTF Coaches profiles have individual pages.</div>
-      </div>
-      <div class="legend-section">
-        <div class="legend-section">
-            <div class = "legend-text">Map data © Natural Earth</div>
-            <div class = "legend-text">Source: Natural Earth (1:110m Admin 0 Countries), modified and adapted.</div>
       </div>
     </div>
 <script>
@@ -626,7 +696,7 @@
         center,
         zoom,
         minZoom: 2.2,
-        maxZoom: 4.2,
+        maxZoom: 6.0,
         extent: WORLD_EXTENT,
       }),
     });
@@ -753,13 +823,17 @@ Promise.all([
       padding,
       maxZoom: 3.8,
     });
+
+    renderHongKongCallout();
   })
   .catch((err) => console.error("Error loading geometry/codes:", err));
 
     // 7) Interactions: hover tooltip + highlight, click open website
     const tooltipEl = makeTooltipEl();
     const mapTargetEl = map.getTargetElement();
+    const hkCalloutEl = document.getElementById("hkCallout");
     const programFilterButtons = Array.from(document.querySelectorAll(".program-filter-btn"));
+    const HONG_KONG_KEY = "Hong Kong, China";
 
     const isTouchDevice =
       window.matchMedia?.("(pointer: coarse)")?.matches ||
@@ -768,6 +842,41 @@ Promise.all([
 
     function hideTooltip() {
       tooltipEl.style.display = "none";
+    }
+
+    function renderHongKongCallout() {
+      if (!hkCalloutEl) return;
+
+      const hongKongFeature = countriesSource
+        .getFeatures()
+        .find((feature) => feature.get("countryKey") === HONG_KONG_KEY);
+
+      if (!hongKongFeature) {
+        hkCalloutEl.style.display = "none";
+        return;
+      }
+
+      const geometry = hongKongFeature.getGeometry();
+      if (!geometry) {
+        hkCalloutEl.style.display = "none";
+        return;
+      }
+
+      const anchorCoordinate = ol.extent.getCenter(geometry.getExtent());
+      const anchorPixel = map.getPixelFromCoordinate(anchorCoordinate);
+
+      if (!anchorPixel || !Number.isFinite(anchorPixel[0]) || !Number.isFinite(anchorPixel[1])) {
+        hkCalloutEl.style.display = "none";
+        return;
+      }
+
+      const calloutOffsetX = window.innerWidth <= 768 ? 28 : 42;
+      const calloutOffsetY = window.innerWidth <= 768 ? -20 : -28;
+
+      hkCalloutEl.style.left = `${anchorPixel[0] + calloutOffsetX}px`;
+      hkCalloutEl.style.top = `${anchorPixel[1] + calloutOffsetY}px`;
+      hkCalloutEl.style.display = "block";
+      hkCalloutEl.classList.toggle("linkable", Boolean(countryWebsites[HONG_KONG_KEY]));
     }
 
     function refreshProgramFilterUI() {
@@ -800,6 +909,15 @@ Promise.all([
       });
     }
 
+    if (hkCalloutEl) {
+      hkCalloutEl.addEventListener("click", (evt) => {
+        evt.preventDefault();
+        evt.stopPropagation();
+        const url = countryWebsites[HONG_KONG_KEY];
+        if (url) window.open(url, "_blank");
+      });
+    }
+
     // Make tooltip interactive only on touch devices (so the button works)
     if (isTouchDevice) {
       tooltipEl.classList.add("touch");
@@ -816,6 +934,10 @@ Promise.all([
 
     map.on("movestart", () => {
       hideTooltip();
+    });
+
+    map.on("moveend", () => {
+      renderHongKongCallout();
     });
 
     map.on("singleclick", (evt) => {
@@ -920,6 +1042,9 @@ Promise.all([
     // Keep legend toggle above map
     const toggleBtn = document.getElementById("legendToggle");
     if (toggleBtn) toggleBtn.style.zIndex = "2001";
+
+    renderHongKongCallout();
+    window.addEventListener("resize", renderHongKongCallout);
   });
 </script>
 
