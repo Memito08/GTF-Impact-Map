@@ -48,7 +48,7 @@
     .legend{position:fixed;top:90px;right:20px;width:320px;max-width:90vw;background:var(--warm-white);
       border:1px solid var(--border-light);border-radius:16px;padding:24px;
       box-shadow:0 8px 30px var(--shadow-medium);backdrop-filter:saturate(140%) blur(6px);
-      z-index:1999;transition:.3s cubic-bezier(.4,0,.2,1);transform:translateX(100%);opacity:0;visibility:hidden;
+      z-index:2002;transition:.3s cubic-bezier(.4,0,.2,1);transform:translateX(100%);opacity:0;visibility:hidden;
       max-height:calc(100vh - 120px);overflow-y:auto}
     .legend.show{transform:translateX(0);opacity:1;visibility:visible}
     .legend-toggle{display:block!important;position:fixed;top:20px;right:20px;background:var(--navy-primary);
@@ -103,7 +103,7 @@
     /* Map disclaimer */
     .disclaimer-toggle{position:fixed;left:20px;bottom:20px;background:var(--warm-white);color:var(--navy-primary);
       border:1px solid var(--border-light);border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:600;font-size:12px;
-      box-shadow:0 4px 14px var(--shadow-medium);z-index:2000;transition:.2s}
+      box-shadow:0 4px 14px var(--shadow-medium);z-index:1998;transition:.2s}
     .disclaimer-toggle:hover{transform:translateY(-1px);box-shadow:0 6px 18px var(--shadow-strong)}
     .disclaimer-toggle.active{background:var(--navy-primary);color:var(--warm-white)}
     .disclaimer-panel{position:fixed;left:20px;bottom:58px;width:360px;max-width:calc(100vw - 40px);background:var(--warm-white);
@@ -285,7 +285,6 @@
       font-size: 13px;
       font-weight: 800;
       letter-spacing: .02em;
-      text-transform: uppercase;
       margin-bottom: 3px;
     }
     .country-callout-copy {
@@ -368,7 +367,7 @@
       <div class="legend-section">
         <div class="legend-item">
           <div class="legend-text">
-            We've reached students, coaches, and Olympiad organizations in 89 countries.
+            We've reached students, coaches, and Olympiad organizations in 88 countries.
           </div>
         </div>
       </div>
@@ -409,7 +408,7 @@
             <div class="legend-text">Training for Olympiad coaches</div>
         </div>
         <div class ="legend-item">
-            <button type="button" class="popup-program star program-filter-btn" data-program="STAR">GTF STARs</button>
+            <button type="button" class="popup-program star program-filter-btn" data-program="STAR">GTF STAR</button>
             <div class="legend-text">Training to high school students</div>
         </div>
       </div>
@@ -499,7 +498,7 @@
           BIG: "GTF BIG Talent Scholars",
           NATIONS: "GTF Olympiad Grants",
           EXCL: "GTF Coaches",
-          STAR: "GTF STARs",
+          STAR: "GTF STAR",
     };
 
     const programLabel = (code) => PROGRAM_LABELS[code] || code;
