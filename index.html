@@ -12,6 +12,7 @@
   <!-- OpenLayers hosted build (official) -->
   <script src="https://cdn.jsdelivr.net/npm/ol@v10.6.1/dist/ol.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.6.1/ol.css">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -79,6 +80,17 @@
   text-align: center;
 }
 
+.legend .program-filter-btn{
+  appearance:none;
+  border:1px solid rgba(29,51,62,.18);
+  cursor:pointer;
+}
+.legend .program-filter-btn.active{
+  box-shadow:0 0 0 3px rgba(43,116,179,.22), 0 4px 14px var(--shadow-medium);
+  transform:translateY(-1px);
+}
+
+
 
     .stats{position:fixed;bottom:24px;left:24px;background:var(--warm-white);border:1px solid var(--border-light);
       border-radius:16px;padding:16px 20px;box-shadow:0 8px 30px var(--shadow-medium);backdrop-filter:saturate(140%) blur(6px);z-index:1000}
@@ -87,6 +99,18 @@
     .stat-number{font-size:20px;font-weight:700;color:var(--navy-primary);transition:.3s}
     .stat-number:hover{transform:scale(1.05);color:var(--accent-blue)}
     .stat-label{font-size:10px;color:var(--light-navy);font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+
+    /* Map disclaimer */
+    .disclaimer-toggle{position:fixed;left:20px;bottom:20px;background:var(--warm-white);color:var(--navy-primary);
+      border:1px solid var(--border-light);border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:600;font-size:12px;
+      box-shadow:0 4px 14px var(--shadow-medium);z-index:2000;transition:.2s}
+    .disclaimer-toggle:hover{transform:translateY(-1px);box-shadow:0 6px 18px var(--shadow-strong)}
+    .disclaimer-toggle.active{background:var(--navy-primary);color:var(--warm-white)}
+    .disclaimer-panel{position:fixed;left:20px;bottom:58px;width:360px;max-width:calc(100vw - 40px);background:var(--warm-white);
+      border:1px solid var(--border-light);border-radius:12px;padding:12px 14px;box-shadow:0 8px 24px var(--shadow-medium);
+      color:var(--navy-primary);font-size:12px;line-height:1.45;z-index:1999;display:none}
+    .disclaimer-panel.show{display:block}
+    .disclaimer-panel a{color:var(--accent-blue);text-decoration:underline}
 
     /* OpenLayers popup styled to theme */
     .ol-popup {
@@ -228,12 +252,16 @@
       .legend.show{transform:translateY(0)}
       .legend-toggle{top:10px;right:10px;padding:10px 14px;font-size:13px}
       .stats{bottom:10px;left:10px;padding:10px 14px}
+      .disclaimer-toggle{left:10px;bottom:10px}
+      .disclaimer-panel{left:10px;bottom:50px;max-width:calc(100vw - 20px)}
       .stat-number{font-size:18px}
     }
     @media (max-width:480px){
       .legend{width:90vw;top:80px;right:5px;padding:18px;max-height:calc(100vh - 105px)}
       .legend-toggle{font-size:12px;padding:10px 14px}
       .stats{bottom:5px;left:5px;font-size:11px;padding:8px 10px}
+      .disclaimer-toggle{left:8px;bottom:8px;padding:7px 10px;font-size:11px}
+      .disclaimer-panel{left:8px;bottom:46px;max-width:calc(100vw - 16px);font-size:11px}
     }
   </style>
 </head>
@@ -248,6 +276,12 @@
 
     <!-- Legend toggle button -->
     <button class="legend-toggle" onclick="toggleLegend()" id="legendToggle">📊 Legend</button>
+    <button class="disclaimer-toggle" onclick="toggleDisclaimer()" id="disclaimerToggle">Map disclaimer</button>
+    <div class="disclaimer-panel" id="disclaimerPanel">
+      Map boundaries are from the
+      <a href="https://www.imf.org/external/datamapper/NGDP_RPCH@WEO/OEMDC/ADVEC/WEOWORLD" target="_blank" rel="noopener noreferrer">IMF DataMapper</a>.
+      The boundaries do not imply any judgment on the legal status of any territory or any endorsement or acceptance of such boundaries.
+    </div>
 
     <div class="legend" id="legend">
       <div class="legend-header">
@@ -288,19 +322,19 @@
       <div class ="legend-section">
         <div class ="legend-section-title">Programs:</div>
         <div class ="legend-item">
-            <span class="popup-program big">GTF BIG Talent Scholars</span>
+            <button type="button" class="popup-program big program-filter-btn" data-program="BIG">GTF BIG Talent Scholars</button>
             <div class="legend-text">Scholarships</div>
         </div>
         <div class ="legend-item">
-            <span class="popup-program nations">GTF Olympiad Grants</span>
+            <button type="button" class="popup-program nations program-filter-btn" data-program="NATIONS">GTF Olympiad Grants</button>
             <div class="legend-text">Grants to organizations</div>
         </div>
         <div class ="legend-item">
-            <span class="popup-program excl">GTF Coaches</span>
+            <button type="button" class="popup-program excl program-filter-btn" data-program="EXCL">GTF Coaches</button>
             <div class="legend-text">Training for Olympiad coaches</div>
         </div>
         <div class ="legend-item">
-            <span class="popup-program star">GTF STARs</span>
+            <button type="button" class="popup-program star program-filter-btn" data-program="STAR">GTF STARs</button>
             <div class="legend-text">Training to high school students</div>
         </div>
       </div>
@@ -325,41 +359,26 @@
             programData = await res.json();
 }
 
-      // Country website mappings for click navigation
+      // Country website mappings loaded from Excel for click navigation
+      let countryWebsites = {};
 
-      let countryWebsites = {
-            "Australia": "https://www.globtalent.org/countries/australia",
-            "Bhutan": "https://www.globtalent.org/countries/bhutan",
-            "Bolivia": "https://www.globtalent.org/countries/latin-america",
-            "Bosnia and Herzegovina": "https://www.globtalent.org/countries/bosnia-and-herzegovina",
-            "Brazil": "https://www.globtalent.org/countries/brazil",
-            "Bulgaria": "https://www.globtalent.org/countries/bulgaria",
-            "Costa Rica": "https://www.globtalent.org/countries/costa-rica",
-            "El Salvador": "https://www.globtalent.org/countries/el-salvador",
-            "Georgia": "https://www.globtalent.org/countries/georgia",
-            "Germany": "https://www.globtalent.org/countries/germany",
-            "Hungary": "https://www.globtalent.org/countries/hungary",
-            "India": "https://www.globtalent.org/countries/india",
-            "Indonesia": "https://www.globtalent.org/countries/indonesia",
-            "Mexico": "https://www.globtalent.org/countries/latin-america",
-            "Mongolia": "https://www.globtalent.org/countries/mongolia",
-            "The Philippines": "https://www.globtalent.org/countries/philippines",
-            "Romania": "https://www.globtalent.org/countries/romania",
-            "Rwanda": "https://www.globtalent.org/countries/rwanda",
-            "Serbia": "https://www.globtalent.org/countries/serbia",
-            "Turkey": "https://www.globtalent.org/countries/turkey",
-            "Ukraine": "https://www.globtalent.org/countries/ukraine",
-            "United Kingdom": "https://www.globtalent.org/countries/united-kingdom",
-            "Finland": "https://www.globtalent.org/countries/finland",
-            "Iran": "https://www.globtalent.org/countries/iran",
-            "France": "https://www.globtalent.org/countries/france",
-            "Kazakhstan": "https://www.globtalent.org/countries/kazakhstan",
-            "North Macedonia": "https://www.globtalent.org/countries/north-macedonia",
-            "Belarus": "https://www.globtalent.org/countries/belarus",
-            "Cyprus": "https://www.globtalent.org/countries/cyprus",
-            "Hong Kong, China": "https://www.globtalent.org/countries/hong-kong-china",
-            "Latin America & Ibero-America": "https://www.globtalent.org/countries/latin-america"
-    }
+      async function loadCountryWebsites() {
+            const res = await fetch("./data/country_websites.xlsx", { cache: "no-store" });
+            if (!res.ok) throw new Error(`Failed to load country_websites.xlsx (${res.status})`);
+
+            const buffer = await res.arrayBuffer();
+            const wb = XLSX.read(buffer, { type: "array" });
+            const ws = wb.Sheets[wb.SheetNames[0]];
+            const rows = XLSX.utils.sheet_to_json(ws, { defval: "" });
+
+            const parsed = {};
+            for (const row of rows) {
+                  const country = String(row.country || row.Country || "").trim();
+                  const url = String(row.url || row.URL || "").trim();
+                  if (country && url) parsed[country] = url;
+            }
+            countryWebsites = parsed;
+      }
 
     /* Legend toggle */
     function toggleLegend(){
@@ -369,15 +388,25 @@
       btn.classList.toggle('active');
       btn.textContent=legend.classList.contains('show')?'✕ Close':'📊 Legend';
     }
+
+    function toggleDisclaimer(){
+      const panel=document.getElementById('disclaimerPanel');
+      const btn=document.getElementById('disclaimerToggle');
+      panel.classList.toggle('show');
+      btn.classList.toggle('active');
+    }
 </script>
 
 <script>
   window.addEventListener("load", async () => {
 
-    // Load programData first
+    // Load external data first
 
     try {
-          await loadProgramData();
+          await Promise.all([
+                loadProgramData(),
+                loadCountryWebsites(),
+          ]);
     } catch (e) {
           console.error(e);
     }
@@ -518,6 +547,7 @@
 
     // Hover state
     let hoveredCountryKey = null;
+    let selectedProgram = null;
 
     function hexToRgba(hex, alpha) {
       const h = hex.replace("#", "");
@@ -532,23 +562,42 @@
       style: (feature) => {
         const key = feature.get("countryKey");
         const level = feature.get("level"); // "elite" | "high" | "active" | "special" | null
+        const programs = feature.get("programs") || [];
+        const matchesSelectedProgram = selectedProgram ? programs.includes(selectedProgram) : true;
 
-        // Países sin datos: casi blanco
+        // Paises sin datos: casi blanco
         let fillColor = "rgba(255,255,255,0.95)";
         let strokeColor = "#D4D9DE";
         let strokeWidth = 0.6;
 
         if (level) {
-          // Mismo tono que tenían los puntos (pero aplicado al relleno)
+          // Mismo tono de los puntos aplicado al relleno.
           const base = levelColor(level);
           fillColor = hexToRgba(base, 0.85);
           strokeColor = "#FFFFFF";
           strokeWidth = 0.9;
         }
 
-        // Highlight al hover: más oscuro + borde más fuerte
+        if (selectedProgram) {
+          if (matchesSelectedProgram) {
+            fillColor = level ? hexToRgba(levelColor(level), 0.98) : "rgba(190,205,225,0.95)";
+            strokeColor = "rgba(70,95,120,0.75)";
+            strokeWidth = 1.1;
+          } else {
+            fillColor = level ? hexToRgba(levelColor(level), 0.22) : "rgba(255,255,255,0.50)";
+            strokeColor = "rgba(170,180,190,0.55)";
+            strokeWidth = 0.5;
+          }
+        }
+
+        // Highlight de hover.
         if (key && key === hoveredCountryKey) {
-          if (level) {
+          if (selectedProgram) {
+            if (matchesSelectedProgram) {
+              strokeColor = "rgba(55,80,105,0.82)";
+              strokeWidth = 1.35;
+            }
+          } else if (level) {
             fillColor = hexToRgba(levelColor(level), 0.97);
           } else {
             fillColor = "rgba(210,220,235,0.95)";
@@ -604,11 +653,6 @@ Promise.all([
         isoToLabel[iso3] = obj.label.trim();
       }
     }
-
-    // Si Program Data usa nombres distintos, normalízalos aquí
-    const labelAlias = {
-    };
-
     // geometry.json:
     // items: { USA: { m:[20,21,...], b:[...] }, ... }
     // masses: { "20": { poly:[[lon,lat],...], scale:"1" }, ... }
@@ -657,7 +701,7 @@ Promise.all([
 
     for (const [iso3, entry] of Object.entries(items)) {
       const labelRaw = isoToLabel[iso3] || iso3;
-      const countryKey = labelAlias[labelRaw] || labelRaw;
+      const countryKey = labelRaw;
 
       const mList = Array.isArray(entry?.m) ? entry.m : [];
       if (!mList.length) continue;
@@ -702,7 +746,9 @@ Promise.all([
     countriesSource.addFeatures(feats);
 
     // Re-fit cuando ya existen polígonos (para asegurar centrado correcto)
-    map.getView().fit(WORLD_EXTENT, {
+    const countriesExtent = countriesSource.getExtent();
+    const fitExtent = (countriesExtent && !ol.extent.isEmpty(countriesExtent)) ? countriesExtent : WORLD_EXTENT;
+    map.getView().fit(fitExtent, {
       size: map.getSize(),
       padding,
       maxZoom: 3.8,
@@ -713,6 +759,7 @@ Promise.all([
     // 7) Interactions: hover tooltip + highlight, click open website
     const tooltipEl = makeTooltipEl();
     const mapTargetEl = map.getTargetElement();
+    const programFilterButtons = Array.from(document.querySelectorAll(".program-filter-btn"));
 
     const isTouchDevice =
       window.matchMedia?.("(pointer: coarse)")?.matches ||
@@ -721,6 +768,36 @@ Promise.all([
 
     function hideTooltip() {
       tooltipEl.style.display = "none";
+    }
+
+    function refreshProgramFilterUI() {
+      for (const btn of programFilterButtons) {
+        btn.classList.toggle("active", btn.dataset.program === selectedProgram);
+      }
+      countriesLayer.changed();
+    }
+
+    function clearProgramFilter() {
+      if (!selectedProgram) return false;
+      selectedProgram = null;
+      hoveredCountryKey = null;
+      hideTooltip();
+      mapTargetEl.style.cursor = "";
+      refreshProgramFilterUI();
+      return true;
+    }
+
+    for (const btn of programFilterButtons) {
+      btn.addEventListener("click", (evt) => {
+        evt.preventDefault();
+        evt.stopPropagation();
+        const programCode = btn.dataset.program || null;
+        selectedProgram = selectedProgram === programCode ? null : programCode;
+        hoveredCountryKey = null;
+        hideTooltip();
+        mapTargetEl.style.cursor = "";
+        refreshProgramFilterUI();
+      });
     }
 
     // Make tooltip interactive only on touch devices (so the button works)
@@ -742,6 +819,8 @@ Promise.all([
     });
 
     map.on("singleclick", (evt) => {
+      if (clearProgramFilter()) return;
+
       const feat = map.forEachFeatureAtPixel(evt.pixel, (f, layer) =>
         layer === countriesLayer ? f : null
       );
@@ -834,7 +913,8 @@ Promise.all([
       document.getElementById("elite-count").textContent = elite;
       document.getElementById("high-count").textContent = high;
       document.getElementById("active-count").textContent = active;
-      document.getElementById("total-countries").textContent = Object.keys(programData).length;
+      const totalCountriesEl = document.getElementById("total-countries");
+      if (totalCountriesEl) totalCountriesEl.textContent = Object.keys(programData).length;
     })();
 
     // Keep legend toggle above map
