@@ -161,13 +161,14 @@ def load_program_data():
 
     for _, row in df.iterrows():
         country = normalize_country_name(row["Country"])
-        gtf_programs[country] = []
+        country_programs = []
         if row["NATIONS"] == 1:
-            gtf_programs[country].append("NATIONS")
+            country_programs.append("NATIONS")
         if row["EXCL"] == 1:
-            gtf_programs[country].append("EXCL")
-        if row["STAR"] == 1:
-            gtf_programs[country].append("STAR")
+            country_programs.append("EXCL")
+
+        if country_programs:
+            gtf_programs[country] = country_programs
 
     return gtf_programs
 

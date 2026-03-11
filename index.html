@@ -130,7 +130,7 @@
     .popup-title{font-size:16px;font-weight:800;margin-bottom:8px}
     .popup-programs{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
     .popup-program{padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;color:var(--warm-white)}
-    .popup-program.star{background:var(--forest-green)} .popup-program.nations{background:var(--burnt-orange)}
+    .popup-program.nations{background:var(--burnt-orange)}
     .popup-program.big{background:var(--deep-violet)} .popup-program.excl{background:var(--olive-brown)}
     .big-scholars-section{margin-top:10px;padding-top:8px;border-top:1px solid var(--border-light)}
     .big-scholars-title{font-size:12px;font-weight:600;color:var(--accent-blue);margin-bottom:6px}
@@ -141,6 +141,8 @@
 
     /* Hover tooltip */
     .hover-tooltip {
+      --tooltip-translate-x: -50%;
+      --tooltip-translate-y: calc(-100% - 8px);
       position: absolute;
       background: var(--warm-white);
       color: var(--navy-primary);
@@ -154,14 +156,22 @@
       white-space: nowrap;
       font-family: 'Inter', sans-serif;
       font-size: 14px;
+      transform: translate(var(--tooltip-translate-x), var(--tooltip-translate-y));
     }
     .hover-tooltip.above {
-      transform: translate(-50%, -100%);
-      margin-top: -8px;
+      --tooltip-translate-y: calc(-100% - 8px);
     }
     .hover-tooltip.below {
-      transform: translate(-50%, 20px);
-      margin-top: 8px;
+      --tooltip-translate-y: 20px;
+    }
+    .hover-tooltip.centered {
+      --tooltip-translate-x: -50%;
+    }
+    .hover-tooltip.align-left {
+      --tooltip-translate-x: 20px;
+    }
+    .hover-tooltip.align-right {
+      --tooltip-translate-x: calc(-100% - 20px);
     }
     .hover-tooltip .popup-title {
       font-size: 16px;
@@ -181,7 +191,6 @@
       font-weight: 600;
       color: var(--warm-white);
     }
-    .hover-tooltip .popup-program.star { background: var(--forest-green); }
     .hover-tooltip .popup-program.nations { background: var(--burnt-orange); }
     .hover-tooltip .popup-program.big { background: var(--deep-violet); }
     .hover-tooltip .popup-program.excl { background: var(--olive-brown); }
@@ -248,13 +257,16 @@
     .country-callout {
       position: absolute;
       display: none;
-      min-width: 180px;
-      padding: 10px 12px;
-      background: rgba(255,255,255,0.96);
-      border: 1px solid rgba(29,51,62,.12);
-      border-radius: 12px;
-      box-shadow: 0 10px 28px rgba(29,51,62,.14);
+      min-width: 0;
+      max-width: 92px;
+      padding: 3px 6px;
+      background: rgba(255,255,255,0.88);
+      border: 1px solid rgba(29,51,62,.08);
+      border-radius: 7px;
+      box-shadow: 0 4px 10px rgba(29,51,62,.08);
       color: var(--navy-primary);
+      line-height: 1.05;
+      white-space: normal;
       z-index: 1500;
       pointer-events: auto;
     }
@@ -262,30 +274,30 @@
       content: "";
       position: absolute;
       top: 50%;
-      left: -34px;
-      width: 28px;
-      height: 2px;
-      background: rgba(44,74,90,.72);
+      left: -14px;
+      width: 10px;
+      height: 1px;
+      background: rgba(44,74,90,.5);
       transform: translateY(-50%);
     }
     .country-callout::after {
       content: "";
       position: absolute;
       top: 50%;
-      left: -42px;
-      width: 10px;
-      height: 10px;
+      left: -18px;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
       background: var(--accent-blue);
-      border: 2px solid var(--warm-white);
-      box-shadow: 0 2px 8px rgba(29,51,62,.18);
+      border: 1px solid var(--warm-white);
+      box-shadow: 0 1px 4px rgba(29,51,62,.12);
       transform: translateY(-50%);
     }
     .country-callout-title {
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: .02em;
-      margin-bottom: 3px;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0;
+      margin: 0;
     }
     .country-callout-copy {
       font-size: 12px;
@@ -296,8 +308,8 @@
       cursor: pointer;
     }
     .country-callout.linkable:hover {
-      border-color: rgba(43,116,179,.24);
-      box-shadow: 0 12px 32px rgba(29,51,62,.18);
+      border-color: rgba(43,116,179,.16);
+      box-shadow: 0 5px 12px rgba(29,51,62,.1);
     }
 
 
@@ -310,10 +322,10 @@
       .disclaimer-toggle{left:10px;bottom:10px}
       .disclaimer-panel{left:10px;bottom:50px;max-width:calc(100vw - 20px)}
       .stat-number{font-size:18px}
-      .country-callout{min-width:150px;padding:8px 10px}
-      .country-callout::before{left:-26px;width:20px}
-      .country-callout::after{left:-34px}
-      .country-callout-title{font-size:12px}
+      .country-callout{max-width:82px;padding:3px 5px}
+      .country-callout::before{left:-12px;width:8px}
+      .country-callout::after{left:-16px;width:4px;height:4px}
+      .country-callout-title{font-size:7px}
       .country-callout-copy{font-size:11px}
     }
     @media (max-width:480px){
@@ -323,15 +335,20 @@
       .disclaimer-toggle{left:8px;bottom:8px;padding:7px 10px;font-size:11px}
       .disclaimer-panel{left:8px;bottom:46px;max-width:calc(100vw - 16px);font-size:11px}
       .country-callout{
-        min-width:132px;
-        padding:7px 9px;
+        max-width:74px;
+        padding:2px 4px;
       }
       .country-callout::before{
-        left:-22px;
-        width:16px;
+        left:-10px;
+        width:6px;
       }
       .country-callout::after{
-        left:-30px;
+        left:-14px;
+        width:4px;
+        height:4px;
+      }
+      .country-callout-title{
+        font-size:6px;
       }
     }
   </style>
@@ -350,7 +367,7 @@
 
     <!-- Legend toggle button -->
     <button class="legend-toggle" onclick="toggleLegend()" id="legendToggle">📊 Legend</button>
-    <button class="disclaimer-toggle" onclick="toggleDisclaimer()" id="disclaimerToggle">Map disclaimer</button>
+    <button class="disclaimer-toggle" onclick="toggleDisclaimer()" id="disclaimerToggle">Disclaimer</button>
     <div class="disclaimer-panel" id="disclaimerPanel">
       Map boundaries are from the
       <a href="https://www.imf.org/external/datamapper/NGDP_RPCH@WEO/OEMDC/ADVEC/WEOWORLD" target="_blank" rel="noopener noreferrer">IMF DataMapper</a>.
@@ -367,7 +384,7 @@
       <div class="legend-section">
         <div class="legend-item">
           <div class="legend-text">
-            We've reached students, coaches, and Olympiad organizations in 88 countries.
+            We've reached students, coaches, and Olympiad organizations in <span id="total-countries">0</span> countries.
           </div>
         </div>
       </div>
@@ -407,10 +424,6 @@
             <button type="button" class="popup-program excl program-filter-btn" data-program="EXCL">GTF Coaches</button>
             <div class="legend-text">Training for Olympiad coaches</div>
         </div>
-        <div class ="legend-item">
-            <button type="button" class="popup-program star program-filter-btn" data-program="STAR">GTF STAR</button>
-            <div class="legend-text">Training to high school students</div>
-        </div>
       </div>
       <div class="legend-section">
         <div class = "legend-text">Countries and regions with GTF BIG Talent Scholars, GTF Olympiad Grantees, or GTF Coaches profiles have individual pages.</div>
@@ -422,10 +435,21 @@
 
       let programData = {}; // se llenará desde /data/programData.json
 
+      const DISPLAYED_PROGRAMS = new Set(["BIG", "NATIONS", "EXCL"]);
+
       async function loadProgramData() {
             const res = await fetch("./data/programData.json", { cache: "no-store" });
             if (!res.ok) throw new Error(`Failed to load programData.json (${res.status})`);
-            programData = await res.json();
+            const rawProgramData = await res.json();
+            programData = Object.fromEntries(
+              Object.entries(rawProgramData).map(([country, data]) => [
+                country,
+                {
+                  ...data,
+                  programs: (data.programs || []).filter((code) => DISPLAYED_PROGRAMS.has(code)),
+                },
+              ])
+            );
 }
 
       // Country website mappings loaded from Excel for click navigation
@@ -498,7 +522,6 @@
           BIG: "GTF BIG Talent Scholars",
           NATIONS: "GTF Olympiad Grants",
           EXCL: "GTF Coaches",
-          STAR: "GTF STAR",
     };
 
     const programLabel = (code) => PROGRAM_LABELS[code] || code;
@@ -544,13 +567,19 @@
       const rect = mapTargetEl.getBoundingClientRect();
       const x = rect.left + pixel[0];
       const y = rect.top + pixel[1];
-
+      const tooltipWidth = tooltipEl.offsetWidth;
+      const edgePadding = 16;
       const isNearTop = y < window.innerHeight * 0.3;
+      const isNearLeft = x < rect.left + tooltipWidth / 2 + edgePadding;
+      const isNearRight = x > rect.right - tooltipWidth / 2 - edgePadding;
 
       // Preserve any extra classes (e.g., .touch)
       tooltipEl.classList.add("hover-tooltip");
       tooltipEl.classList.toggle("below", isNearTop);
       tooltipEl.classList.toggle("above", !isNearTop);
+      tooltipEl.classList.toggle("align-left", isNearLeft);
+      tooltipEl.classList.toggle("align-right", !isNearLeft && isNearRight);
+      tooltipEl.classList.toggle("centered", !isNearLeft && !isNearRight);
 
       tooltipEl.style.left = x + "px";
       tooltipEl.style.top = y + "px";
@@ -869,8 +898,8 @@ Promise.all([
         return;
       }
 
-      const calloutOffsetX = window.innerWidth <= 768 ? 28 : 42;
-      const calloutOffsetY = window.innerWidth <= 768 ? -20 : -28;
+      const calloutOffsetX = window.innerWidth <= 768 ? 14 : 18;
+      const calloutOffsetY = window.innerWidth <= 768 ? -10 : -12;
 
       hkCalloutEl.style.left = `${anchorPixel[0] + calloutOffsetX}px`;
       hkCalloutEl.style.top = `${anchorPixel[1] + calloutOffsetY}px`;
