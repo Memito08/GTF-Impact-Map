@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -19,6 +19,7 @@
 
     :root{
       --cream-bg:#F8F6F1; --cream-light:#FDFBF7;
+      --map-ocean:#E7EEF2; --map-ocean-deep:#DCE7ED;
       --navy-primary:#1d333e; --navy-secondary:#2C4A5A; --light-navy:#4A6B7A;
       --accent-blue:#2B74B3; --accent-blue-light:#6BA7D6;
       --warm-white:#FFFFFF; --soft-gray:#F8F9FA;
@@ -41,8 +42,18 @@
     *{box-sizing:border-box}
     body{font-family:'Inter',system-ui,sans-serif;background:var(--cream-bg);color:var(--navy-primary)}
 
-    .map-app{position:relative;width:100vw;height:100vh;background:var(--cream-bg)}
-    #map{position:absolute;inset:0;background:var(--cream-bg);z-index:1}
+    .map-app{
+      position:relative;
+      width:100vw;
+      height:100vh;
+      background:linear-gradient(180deg,var(--map-ocean) 0%, var(--map-ocean-deep) 100%);
+    }
+    #map{
+      position:absolute;
+      inset:0;
+      background:linear-gradient(180deg,var(--map-ocean) 0%, var(--map-ocean-deep) 100%);
+      z-index:1;
+    }
 
     /* Legend / Stats (theme) */
     .legend{position:fixed;top:90px;right:20px;width:320px;max-width:90vw;background:var(--warm-white);
@@ -358,6 +369,9 @@
     <div id="map"></div>
     <div id="hkCallout" class="country-callout" aria-hidden="true">
       <div class="country-callout-title">Hong Kong, China</div>
+    </div>
+    <div id="singaporeCallout" class="country-callout" aria-hidden="true">
+      <div class="country-callout-title">Singapore</div>
     </div>
 
     <!-- Popup container for OpenLayers -->
@@ -852,7 +866,7 @@ Promise.all([
       maxZoom: 3.8,
     });
 
-    renderHongKongCallout();
+    renderCountryCallouts();
   })
   .catch((err) => console.error("Error loading geometry/codes:", err));
 
@@ -860,8 +874,14 @@ Promise.all([
     const tooltipEl = makeTooltipEl();
     const mapTargetEl = map.getTargetElement();
     const hkCalloutEl = document.getElementById("hkCallout");
+    const singaporeCalloutEl = document.getElementById("singaporeCallout");
     const programFilterButtons = Array.from(document.querySelectorAll(".program-filter-btn"));
     const HONG_KONG_KEY = "Hong Kong, China";
+    const SINGAPORE_KEY = "Singapore";
+    const countryCallouts = [
+      { element: hkCalloutEl, countryKey: HONG_KONG_KEY },
+      { element: singaporeCalloutEl, countryKey: SINGAPORE_KEY },
+    ];
 
     const isTouchDevice =
       window.matchMedia?.("(pointer: coarse)")?.matches ||
@@ -872,21 +892,21 @@ Promise.all([
       tooltipEl.style.display = "none";
     }
 
-    function renderHongKongCallout() {
-      if (!hkCalloutEl) return;
+    function renderCountryCallout({ element, countryKey }) {
+      if (!element) return;
 
-      const hongKongFeature = countriesSource
+      const feature = countriesSource
         .getFeatures()
-        .find((feature) => feature.get("countryKey") === HONG_KONG_KEY);
+        .find((candidate) => candidate.get("countryKey") === countryKey);
 
-      if (!hongKongFeature) {
-        hkCalloutEl.style.display = "none";
+      if (!feature) {
+        element.style.display = "none";
         return;
       }
 
-      const geometry = hongKongFeature.getGeometry();
+      const geometry = feature.getGeometry();
       if (!geometry) {
-        hkCalloutEl.style.display = "none";
+        element.style.display = "none";
         return;
       }
 
@@ -894,17 +914,23 @@ Promise.all([
       const anchorPixel = map.getPixelFromCoordinate(anchorCoordinate);
 
       if (!anchorPixel || !Number.isFinite(anchorPixel[0]) || !Number.isFinite(anchorPixel[1])) {
-        hkCalloutEl.style.display = "none";
+        element.style.display = "none";
         return;
       }
 
       const calloutOffsetX = window.innerWidth <= 768 ? 14 : 18;
       const calloutOffsetY = window.innerWidth <= 768 ? -10 : -12;
 
-      hkCalloutEl.style.left = `${anchorPixel[0] + calloutOffsetX}px`;
-      hkCalloutEl.style.top = `${anchorPixel[1] + calloutOffsetY}px`;
-      hkCalloutEl.style.display = "block";
-      hkCalloutEl.classList.toggle("linkable", Boolean(countryWebsites[HONG_KONG_KEY]));
+      element.style.left = `${anchorPixel[0] + calloutOffsetX}px`;
+      element.style.top = `${anchorPixel[1] + calloutOffsetY}px`;
+      element.style.display = "block";
+      element.classList.toggle("linkable", Boolean(countryWebsites[countryKey]));
+    }
+
+    function renderCountryCallouts() {
+      for (const callout of countryCallouts) {
+        renderCountryCallout(callout);
+      }
     }
 
     function refreshProgramFilterUI() {
@@ -937,11 +963,12 @@ Promise.all([
       });
     }
 
-    if (hkCalloutEl) {
-      hkCalloutEl.addEventListener("click", (evt) => {
+    for (const { element, countryKey } of countryCallouts) {
+      if (!element) continue;
+      element.addEventListener("click", (evt) => {
         evt.preventDefault();
         evt.stopPropagation();
-        const url = countryWebsites[HONG_KONG_KEY];
+        const url = countryWebsites[countryKey];
         if (url) window.open(url, "_blank");
       });
     }
@@ -965,7 +992,7 @@ Promise.all([
     });
 
     map.on("moveend", () => {
-      renderHongKongCallout();
+      renderCountryCallouts();
     });
 
     map.on("singleclick", (evt) => {
@@ -1071,8 +1098,8 @@ Promise.all([
     const toggleBtn = document.getElementById("legendToggle");
     if (toggleBtn) toggleBtn.style.zIndex = "2001";
 
-    renderHongKongCallout();
-    window.addEventListener("resize", renderHongKongCallout);
+    renderCountryCallouts();
+    window.addEventListener("resize", renderCountryCallouts);
   });
 </script>
 
