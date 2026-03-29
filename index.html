@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Global Talent Map — Winkel Tripel (OpenLayers)</title>
+  <title>GTF Impact Map</title>
   <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAABILAAASCwAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A">
 
   <!-- proj4 (keep this above OpenLayers) -->
@@ -440,7 +440,7 @@
         </div>
       </div>
       <div class="legend-section">
-        <div class = "legend-text">Only countries/regions with GTF BIG Talent Scholars or GTF Olympiad Grantees have individual pages.</div>
+        <div class = "legend-text">Countries/regions with GTF BIG Talent Scholars or GTF Olympiad Grantees have individual pages.</div>
       </div>
     </div>
 <script>
@@ -564,9 +564,9 @@
     function responsiveViewParams() {
       // Ajusta aquí, pero sin “magia” extra
       if (window.innerWidth <= 768) {
-        return { centerLonLat: [10, 50], zoom: 2.7, padding: [120, 30, 30, 30] };
+        return { centerLonLat: [10, 50], zoom: 2.7, padding: [20, 20, 20, 20] };
       }
-      return { centerLonLat: [0, 5], zoom: 2.9, padding: [200, 60, 40, 60] };
+      return { centerLonLat: [0, 5], zoom: 2.9, padding: [20, 20, 20, 20] };
     }
 
     function makeTooltipEl() {
@@ -737,9 +737,6 @@
         projection,
         center,
         zoom,
-        minZoom: 2.2,
-        maxZoom: 6.0,
-        extent: WORLD_EXTENT,
       }),
     });
 
@@ -865,6 +862,33 @@ Promise.all([
       padding,
       maxZoom: 3.8,
     });
+
+    // Capture the fitted state to build the permanent view
+    const fittedCenter     = map.getView().getCenter();
+    const fittedZoom       = map.getView().getZoom();
+    const fittedResolution = map.getView().getResolution();
+    const [mapW, mapH]     = map.getSize();
+
+    // Use the viewport at the fitted zoom as the pan boundary.
+    // OL's native extent constraint blocks any drag/touch that would
+    // push the map off-screen, with zero JS overhead per frame.
+    const panExtent = [
+      fittedCenter[0] - mapW * fittedResolution / 2,
+      fittedCenter[1] - mapH * fittedResolution / 2,
+      fittedCenter[0] + mapW * fittedResolution / 2,
+      fittedCenter[1] + mapH * fittedResolution / 2,
+    ];
+
+    map.setView(new ol.View({
+      projection,
+      center: fittedCenter,
+      zoom: fittedZoom,
+      minZoom: fittedZoom,
+      // ── ZOOM-IN LIMIT ── Change this value to control how far in the user can zoom.
+      // Lower = less zoom, higher = more zoom. Suggested range: 4–10.
+      maxZoom: 6,
+      extent: panExtent,
+    }));
 
     renderCountryCallouts();
   })

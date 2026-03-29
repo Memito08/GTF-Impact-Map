@@ -5,10 +5,14 @@
 *.bak
 *~
 
+# Claude Code
+.claude/
+
 # Python virtual environment and cache
 .env/
 venv/
 env/
+.venv/
 __pycache__/
 *.pyc
 *.pyo
