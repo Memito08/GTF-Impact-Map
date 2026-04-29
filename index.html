@@ -12,7 +12,6 @@
   <!-- OpenLayers hosted build (official) -->
   <script src="https://cdn.jsdelivr.net/npm/ol@v10.6.1/dist/ol.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v10.6.1/ol.css">
-  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -28,10 +27,10 @@
       --shadow-medium:rgba(29,51,62,.12);
       --shadow-strong:rgba(29,51,62,.16);
       --forest-green:rgba(30, 86, 49, 1);
-      --burnt-orange:rgba(195, 74, 44, 1);
-      --deep-violet:rgba(107, 30, 109, 1);
+      --burnt-orange:rgba(238, 202, 76, 1);
+      --deep-violet:rgba(29, 119, 105, 1);
       --charcoal-gray:rgba(46, 46, 46, 1);
-      --olive-brown:rgba(110, 78, 30, 1);
+      --olive-brown:rgba(206, 223, 239, 1);
 
 
       /* Vibrant dot colors */
@@ -141,8 +140,8 @@
     .popup-title{font-size:16px;font-weight:800;margin-bottom:8px}
     .popup-programs{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px}
     .popup-program{padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;color:var(--warm-white)}
-    .popup-program.nations{background:var(--burnt-orange)}
-    .popup-program.big{background:var(--deep-violet)} .popup-program.excl{background:var(--olive-brown)}
+    .popup-program.nations{background:var(--burnt-orange);color:var(--navy-primary)}
+    .popup-program.big{background:var(--deep-violet)} .popup-program.excl{background:var(--olive-brown);color:var(--navy-primary)}
     .big-scholars-section{margin-top:10px;padding-top:8px;border-top:1px solid var(--border-light)}
     .big-scholars-title{font-size:12px;font-weight:600;color:var(--accent-blue);margin-bottom:6px}
     .year-group{margin-bottom:6px}.year-label{font-size:11px;font-weight:700;color:var(--navy-secondary);margin-bottom:3px}
@@ -202,9 +201,9 @@
       font-weight: 600;
       color: var(--warm-white);
     }
-    .hover-tooltip .popup-program.nations { background: var(--burnt-orange); }
+    .hover-tooltip .popup-program.nations { background: var(--burnt-orange); color: var(--navy-primary); }
     .hover-tooltip .popup-program.big { background: var(--deep-violet); }
-    .hover-tooltip .popup-program.excl { background: var(--olive-brown); }
+    .hover-tooltip .popup-program.excl { background: var(--olive-brown); color: var(--navy-primary); }
     .hover-tooltip .big-scholars-section {
       margin-top: 10px;
       padding-top: 8px;
@@ -466,23 +465,25 @@
             );
 }
 
-      // Country website mappings loaded from Excel for click navigation
+      // Country website mappings loaded from slugs.csv for click navigation
       let countryWebsites = {};
 
       async function loadCountryWebsites() {
-            const res = await fetch("./data/country_websites.xlsx", { cache: "no-store" });
-            if (!res.ok) throw new Error(`Failed to load country_websites.xlsx (${res.status})`);
+            const res = await fetch("./data/slugs.csv", { cache: "no-store" });
+            if (!res.ok) throw new Error(`Failed to load slugs.csv (${res.status})`);
 
-            const buffer = await res.arrayBuffer();
-            const wb = XLSX.read(buffer, { type: "array" });
-            const ws = wb.Sheets[wb.SheetNames[0]];
-            const rows = XLSX.utils.sheet_to_json(ws, { defval: "" });
+            const text = await res.text();
+            const lines = text.trim().split("\n").slice(1); // skip header
 
             const parsed = {};
-            for (const row of rows) {
-                  const country = String(row.country || row.Country || "").trim();
-                  const url = String(row.url || row.URL || "").trim();
-                  if (country && url) parsed[country] = url;
+            for (const line of lines) {
+                  const sep = line.indexOf(";");
+                  if (sep === -1) continue;
+                  const country = line.slice(0, sep).trim();
+                  const slug = line.slice(sep + 1).trim();
+                  if (country && slug) {
+                        parsed[country] = `https://global-talent-fund.webflow.io/countries/${slug}`;
+                  }
             }
             countryWebsites = parsed;
       }
@@ -881,6 +882,12 @@ Promise.all([
 
     const isMobile = window.innerWidth <= 768;
     const mobileExtraZoom = 2.0;
+
+    // On mobile portrait mapH >> world height, so clamp vertical bounds only.
+    if (isMobile) {
+      panExtent[1] = Math.max(panExtent[1], WORLD_EXTENT[1]);
+      panExtent[3] = Math.min(panExtent[3], WORLD_EXTENT[3]);
+    }
 
     map.setView(new ol.View({
       projection,
