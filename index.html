@@ -78,7 +78,6 @@
     .legend-color.active{background:linear-gradient(135deg,var(--dot-active),#2563EB)}
     .legend-color.special{background:linear-gradient(135deg,var(--dot-special),#C2B11B)}
     .legend-text{flex:1;font-size:14px;font-weight:500;color:var(--navy-primary)}
-    .legend-count{color:var(--light-navy);font-size:11px;font-weight:600;background:var(--soft-gray);padding:2px 6px;border-radius:10px;min-width:20px;text-align:center}
     .legend-item {
   display: flex;
   align-items: center;
@@ -111,16 +110,9 @@
     .stat-label{font-size:10px;color:var(--light-navy);font-weight:500;text-transform:uppercase;letter-spacing:.5px}
 
     /* Map disclaimer */
-    .disclaimer-toggle{position:fixed;left:20px;bottom:20px;background:var(--warm-white);color:var(--navy-primary);
-      border:1px solid var(--border-light);border-radius:10px;padding:8px 12px;cursor:pointer;font-weight:600;font-size:12px;
-      box-shadow:0 4px 14px var(--shadow-medium);z-index:1998;transition:.2s}
-    .disclaimer-toggle:hover{transform:translateY(-1px);box-shadow:0 6px 18px var(--shadow-strong)}
-    .disclaimer-toggle.active{background:var(--navy-primary);color:var(--warm-white)}
-    .disclaimer-panel{position:fixed;left:20px;bottom:58px;width:360px;max-width:calc(100vw - 40px);background:var(--warm-white);
-      border:1px solid var(--border-light);border-radius:12px;padding:12px 14px;box-shadow:0 8px 24px var(--shadow-medium);
-      color:var(--navy-primary);font-size:12px;line-height:1.45;z-index:1999;display:none}
-    .disclaimer-panel.show{display:block}
-    .disclaimer-panel a{color:var(--accent-blue);text-decoration:underline}
+    .disclaimer-note{display:block;margin-top:6px;color:var(--light-navy);font-size:11px;line-height:1.45}
+    .legend-disclaimer{color:var(--light-navy);font-size:11px;line-height:1.45}
+    .legend-disclaimer a{color:var(--accent-blue);text-decoration:underline}
 
     /* OpenLayers popup styled to theme */
     .ol-popup {
@@ -329,8 +321,6 @@
       .legend.show{transform:translateY(0)}
       .legend-toggle{top:10px;right:10px;padding:10px 14px;font-size:13px}
       .stats{bottom:10px;left:10px;padding:10px 14px}
-      .disclaimer-toggle{left:10px;bottom:10px}
-      .disclaimer-panel{left:10px;bottom:50px;max-width:calc(100vw - 20px)}
       .stat-number{font-size:18px}
       .country-callout{max-width:82px;padding:3px 5px}
       .country-callout::before{left:-12px;width:8px}
@@ -342,8 +332,6 @@
       .legend{width:90vw;top:80px;right:5px;padding:18px;max-height:calc(100vh - 105px)}
       .legend-toggle{font-size:12px;padding:10px 14px}
       .stats{bottom:5px;left:5px;font-size:11px;padding:8px 10px}
-      .disclaimer-toggle{left:8px;bottom:8px;padding:7px 10px;font-size:11px}
-      .disclaimer-panel{left:8px;bottom:46px;max-width:calc(100vw - 16px);font-size:11px}
       .country-callout{
         max-width:74px;
         padding:2px 4px;
@@ -380,11 +368,6 @@
 
     <!-- Legend toggle button -->
     <button class="legend-toggle" onclick="toggleLegend()" id="legendToggle">📊 Legend</button>
-    <button class="disclaimer-toggle" onclick="toggleDisclaimer()" id="disclaimerToggle">Disclaimer</button>
-    <div class="disclaimer-panel" id="disclaimerPanel">
-      Map boundaries are from the
-      <a href="https://www.imf.org/external/datamapper/NGDP_RPCH@WEO/OEMDC/ADVEC/WEOWORLD" target="_blank" rel="noopener noreferrer">IMF</a>, a specialized agency of the United Nations. Global Talent Fund accepts no liability for omissions or errors in the data. The boundaries, colors, denominations, and any other information shown on the maps do not imply, on the part of GTF, any judgment on the legal status of any territory or any endorsement or acceptance of such boundaries.
-    </div>
     <div class="legend" id="legend">
       <div class="legend-header">
         <div class="legend-title">GTF Impact Map</div>
@@ -395,7 +378,8 @@
       <div class="legend-section">
         <div class="legend-item">
           <div class="legend-text">
-            We've reached students, coaches, and Olympiad organizations in <span id="total-countries">0</span> countries.
+            We've reached students, coaches, and organizations in <span id="total-countries">0</span> countries.
+            <span class="disclaimer-note">* see disclaimer</span>
           </div>
         </div>
       </div>
@@ -406,19 +390,16 @@
         <div class="legend-item">
           <div class="legend-color elite"></div>
           <div class="legend-text">3 programs</div>
-          <div class="legend-count" id="elite-count">0</div>
         </div>
 
         <div class="legend-item">
           <div class="legend-color high"></div>
           <div class="legend-text">2 programs</div>
-          <div class="legend-count" id="high-count">0</div>
         </div>
 
         <div class="legend-item">
           <div class="legend-color active"></div>
           <div class="legend-text">1 program</div>
-          <div class="legend-count" id="active-count">0</div>
         </div>
       </div>
       <div class ="legend-section">
@@ -438,6 +419,12 @@
       </div>
       <div class="legend-section">
         <div class = "legend-text">Countries/regions with GTF BIG Talent Scholars or GTF Olympiad Grantees have individual pages.</div>
+      </div>
+      <div class="legend-section">
+        <div class="legend-disclaimer">
+          * Map boundaries are from the
+          <a href="https://www.imf.org/external/datamapper/NGDP_RPCH@WEO/OEMDC/ADVEC/WEOWORLD" target="_blank" rel="noopener noreferrer">IMF</a>, a specialized agency of the United Nations. Global Talent Fund accepts no liability for omissions or errors in the data. The boundaries, colors, denominations, and any other information shown on the maps do not imply, on the part of GTF, any judgment on the legal status of any territory or any endorsement or acceptance of such boundaries.
+        </div>
       </div>
     </div>
 <script>
@@ -495,12 +482,6 @@
       btn.textContent=legend.classList.contains('show')?'✕ Close':'📊 Legend';
     }
 
-    function toggleDisclaimer(){
-      const panel=document.getElementById('disclaimerPanel');
-      const btn=document.getElementById('disclaimerToggle');
-      panel.classList.toggle('show');
-      btn.classList.toggle('active');
-    }
 </script>
 
 <script>
@@ -1121,20 +1102,11 @@ Promise.all([
     // 8) Stats (single pass, no extra objects)
     // -----------------------------
     (function updateStats() {
-      let elite = 0, high = 0, active = 0;
-
-      for (const d of Object.values(programData)) {
-        const n = (d.programs || []).length;
-        if (n >= 3) elite++;
-        else if (n === 2) high++;
-        else if (n === 1) active++;
-      }
-
-      document.getElementById("elite-count").textContent = elite;
-      document.getElementById("high-count").textContent = high;
-      document.getElementById("active-count").textContent = active;
       const totalCountriesEl = document.getElementById("total-countries");
-      if (totalCountriesEl) totalCountriesEl.textContent = Object.keys(programData).length;
+      if (totalCountriesEl) {
+        const roundedCountries = Math.floor(Object.keys(programData).length / 10) * 10;
+        totalCountriesEl.textContent = `+${roundedCountries}`;
+      }
     })();
 
     // Keep legend toggle above map
