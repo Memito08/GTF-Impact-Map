@@ -6,8 +6,7 @@
   <title>GTF Impact Map</title>
   <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64,AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAABILAAASCwAAAAAAAAAAAAD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A////AP///wD///8A">
 
-  <!-- proj4 (keep this above OpenLayers) -->
-  <script src="https://cdn.jsdelivr.net/npm/proj4@2.9.0/dist/proj4.js"></script>
+
 
   <!-- OpenLayers hosted build (official) -->
   <script src="https://cdn.jsdelivr.net/npm/ol@v10.6.1/dist/ol.js"></script>
@@ -431,7 +430,7 @@
 
       // Load programData.json
 
-      let programData = {}; // se llenará desde /data/programData.json
+      let programData = {}; // populated from /data/programData.json
 
       const DISPLAYED_PROGRAMS = new Set(["BIG", "NATIONS", "EXCL"]);
 
@@ -501,11 +500,56 @@
     // -----------------------------
     // 1) Projection (simple + explicit)
     // -----------------------------
-    const PROJ_CODE = "CUSTOM:ROBIN";
-    proj4.defs(PROJ_CODE, "+proj=robin +datum=WGS84 +units=m +no_defs");
-    ol.proj.proj4.register(proj4);
+    const PROJ_CODE = "CUSTOM:WINTRI";
 
-    const WORLD_EXTENT = [-18000000, -8500000, 18000000, 8500000];
+    // proj4.js 2.9.0 does not ship +proj=wintri, so we register the Winkel Tripel
+    // projection directly with OpenLayers using the standard mathematical formula.
+    // Standard parallel: phi1 = acos(2/pi) ≈ 50.467°, sphere radius R = 6 371 000 m.
+    // Winkel Tripel = arithmetic mean of equirectangular and Aitoff projections:
+    //   x = (lam*cos(phi1) + 2*cos(phi)*sin(lam/2)/sinc(alpha)) * R/2
+    //   y = (phi           + sin(phi)/sinc(alpha))               * R/2
+    // where alpha = acos(cos(phi)*cos(lam/2)), sinc(alpha) = sin(alpha)/alpha.
+    // Both x and y use the same sinc(alpha) — using any constant here (e.g. cos(phi1/2)) is wrong.
+    (function registerWinkelTripel() {
+      const R      = 6371000;
+      const phi1   = Math.acos(2 / Math.PI);  // standard parallel ≈ 50.467°
+      const cosPhi1 = Math.cos(phi1);          // precomputed — used in every forward call
+
+      function forward([lon, lat]) {
+        const lam = lon * Math.PI / 180;  // longitude in radians
+        const phi = lat * Math.PI / 180;  // latitude in radians
+
+        // alpha is the angular distance from the origin; clamped to [-1,1] to guard
+        // against floating-point overshoot that would make acos return NaN at the poles.
+        const alpha = Math.acos(Math.max(-1, Math.min(1, Math.cos(phi) * Math.cos(lam / 2))));
+
+        // sinc(alpha) = sin(alpha)/alpha.  At alpha≈0 (origin) the limit is 1.
+        // This same sinc term divides both x and y — the Aitoff component of each axis.
+        const sinc  = alpha < 1e-10 ? 1 : Math.sin(alpha) / alpha;
+
+        return [
+          R * (lam * cosPhi1 + 2 * Math.cos(phi) * Math.sin(lam / 2) / sinc) / 2,  // x
+          R * (phi            +     Math.sin(phi)                     / sinc) / 2,  // y
+        ];
+      }
+
+      // Approximate inverse — not mathematically exact (Winkel Tripel has no closed-form
+      // inverse) but accurate enough for mouse-coordinate display.
+      function inverse([x, y]) {
+        const phi = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, (2 * y / R)));
+        const lam = Math.max(-Math.PI,     Math.min(Math.PI,     (2 * x / R) / (cosPhi1 + Math.cos(phi))));
+        return [lam * 180 / Math.PI, phi * 180 / Math.PI];
+      }
+
+      const proj = new ol.proj.Projection({ code: PROJ_CODE, units: "m", global: false });
+      ol.proj.addProjection(proj);
+      ol.proj.addCoordinateTransforms("EPSG:4326", PROJ_CODE, forward, inverse);
+    })();
+
+    // World extent in Winkel Tripel meters.
+    // x_max: equator at ±180° → R/2*(π*cos(phi1) + π) = R*(1 + cos(phi1))*π/2 ≈ 16 380 000 m
+    // y_max: pole (±90°)     → R/2*(π/2 + 1/sinc(π/2)) = R/2*(π/2 + π/2) = R*π/2 ≈ 10 008 000 m
+    const WORLD_EXTENT = [-16380000, -10008000, 16380000, 10008000];
     const projection = ol.proj.get(PROJ_CODE);
     projection.setExtent(WORLD_EXTENT);
 
@@ -542,7 +586,7 @@
     }
 
     function responsiveViewParams() {
-      // Ajusta aquí, pero sin “magia” extra
+      // Adjust here without additional magic
       if (window.innerWidth <= 768) {
         return { centerLonLat: [10, 50], zoom: 2.7, padding: [20, 20, 20, 20] };
       }
@@ -663,7 +707,7 @@
         let strokeWidth = 0.6;
 
         if (level) {
-          // Mismo tono de los puntos aplicado al relleno.
+          // Same hue as the point markers applied to the fill.
           const base = levelColor(level);
           fillColor = hexToRgba(base, 0.85);
           strokeColor = "#FFFFFF";
@@ -682,7 +726,7 @@
           }
         }
 
-        // Highlight de hover.
+        // Hover highlight.
         if (key && key === hoveredCountryKey) {
           if (selectedProgram) {
             if (matchesSelectedProgram) {
@@ -748,36 +792,33 @@ Promise.all([
     const items = geomJson.items || {};
     const masses = geomJson.masses || {};
 
-    // ---- geometry.json está normalizado (x≈[0..200], y≈[0..109.678]) y Y crece hacia abajo.
-    // Calculamos bbox real desde masses para mapearlo a WORLD_EXTENT (Robinson metros).
-    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    // geometry.json stores polygon vertices in a custom image space: x ∈ [0..200], y ∈ [0..IMG_H],
+    // Y growing downward.  The bbox field in that file records the geographic extent of that space.
+    // The IMF renderer (datamapper.js) maps coordinates as follows — we replicate it exactly:
+    //   • x → longitude:  linear interpolation across [BBOX_LEFT .. BBOX_RIGHT]
+    //   • y → latitude:   tan(lat/2) interpolation (Gudermannian-like, NOT plain equirectangular)
+    // BBOX_RIGHT is stored as -169.755329° in the file; because right < left the image crosses the
+    // antimeridian, so we add 360° to get the continuous value 190.244671°.  Russia's polygon is
+    // stored as one continuous ring spanning lon ≈ 28°E to 182°E — we intentionally do NOT
+    // normalize lon > 180° back to negative, because the Winkel Tripel forward formula handles
+    // extended longitudes continuously and normalization would split the ring.
+    const BBOX_LEFT    = -168.965424;
+    const BBOX_RIGHT   =  190.244671;   // raw -169.755329 + 360 (right < left → antimeridian wrap)
+    const BBOX_LON_SPAN = BBOX_RIGHT - BBOX_LEFT;   // 359.210095°
+    const IMG_W = 200;
+    const IMG_H = 200 / 1.8235208601308;            // = 109.678… (from geometry.json aspect field)
+    const TAN_TOP    = Math.tan(83.567272  * Math.PI / 360);  // tan(lat_top / 2),    from bbox
+    const TAN_BOTTOM = Math.tan(-55.899163 * Math.PI / 360);  // tan(lat_bottom / 2), from bbox
+    const TAN_SPAN   = TAN_TOP - TAN_BOTTOM;
 
-    for (const m of Object.values(masses)) {
-      const poly = m?.poly;
-      if (!Array.isArray(poly)) continue;
-      for (const pt of poly) {
-        const x = pt[0], y = pt[1];
-        if (x < minX) minX = x;
-        if (x > maxX) maxX = x;
-        if (y < minY) minY = y;
-        if (y > maxY) maxY = y;
-      }
+    function geomToProj([x, y]) {
+      const lon = (x / IMG_W) * BBOX_LON_SPAN + BBOX_LEFT;  // linear in longitude
+      const tanLat = TAN_TOP - (y / IMG_H) * TAN_SPAN;       // linear in tan(lat/2)
+      const lat = Math.atan(tanLat) * (360 / Math.PI);        // invert tan(lat/2) → lat
+      return ol.proj.transform([lon, lat], "EPSG:4326", PROJ_CODE);  // → Winkel Tripel meters
     }
 
-    // Mapeo afín: geometry.json -> WORLD_EXTENT (Robinson metros)
-    const [wx0, wy0, wx1, wy1] = WORLD_EXTENT;
-    const scaleX = (wx1 - wx0) / (maxX - minX);
-    const scaleY = (wy1 - wy0) / (maxY - minY);
-
-    // Convierte un punto [x,y] del geometry.json a [X,Y] en PROJ_CODE.
-    // Nota: invertimos Y porque geometry.json tiene Y hacia abajo.
-    function geomToRobin([x, y]) {
-      const X = wx0 + (x - minX) * scaleX;
-      const Y = wy1 - (y - minY) * scaleY; // flip vertical
-      return [X, Y];
-    }
-
-    // Asegura que el anillo esté cerrado (primer punto = último)
+    // Ensures the ring is closed (first point equals last point).
     function closeRing(ring) {
       if (!ring.length) return ring;
       const [x0, y0] = ring[0];
@@ -795,7 +836,7 @@ Promise.all([
       const mList = Array.isArray(entry?.m) ? entry.m : [];
       if (!mList.length) continue;
 
-      // Construimos un MultiPolygon: cada "mass" es un polígono (anillo exterior)
+      // Build a MultiPolygon: each "mass" is one polygon (exterior ring only).
       const multi = [];
 
       for (const massId of mList) {
@@ -803,18 +844,18 @@ Promise.all([
         const poly = mass?.poly;
         if (!Array.isArray(poly) || poly.length < 3) continue;
 
-        const ring = poly.map(geomToRobin);
+        const ring = poly.map(geomToProj);
         closeRing(ring);
         multi.push([ring]);
       }
 
       if (!multi.length) continue;
 
-      const geom = new ol.geom.MultiPolygon(multi); // ya está en PROJ_CODE
+      const geom = new ol.geom.MultiPolygon(multi); // already in PROJ_CODE coordinates
 
       const f = new ol.Feature({ geometry: geom });
 
-      // Enlaza el país con programData (tu lógica existente)
+      // Link the country feature to programData.
       f.set("countryKey", countryKey);
 
       const d = programData[countryKey];
@@ -834,7 +875,7 @@ Promise.all([
 
     countriesSource.addFeatures(feats);
 
-    // Re-fit cuando ya existen polígonos (para asegurar centrado correcto)
+    // Re-fit once polygons exist to ensure correct centering.
     const countriesExtent = countriesSource.getExtent();
     const fitExtent = (countriesExtent && !ol.extent.isEmpty(countriesExtent)) ? countriesExtent : WORLD_EXTENT;
     map.getView().fit(fitExtent, {
@@ -1084,10 +1125,10 @@ Promise.all([
       // highlight
       if (hoveredCountryKey !== country) {
         hoveredCountryKey = country;
-        countriesLayer.changed(); // fuerza re-render del estilo
+        countriesLayer.changed(); // force style re-render
       }
 
-      // tooltip (solo si tiene programas; si lo quieres siempre, quita este if)
+      // tooltip (only if the country has programs; remove the if to always show)
       if (!programs.length) {
         tooltipEl.style.display = "none";
         return;
