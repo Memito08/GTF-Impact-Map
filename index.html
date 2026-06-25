@@ -76,6 +76,10 @@
     .legend-color.high{background:linear-gradient(135deg,var(--dot-high),#3730A3)}
     .legend-color.active{background:linear-gradient(135deg,var(--dot-active),#2563EB)}
     .legend-color.special{background:linear-gradient(135deg,var(--dot-special),#C2B11B)}
+    .legend-color.regional-support{
+      background:repeating-linear-gradient(135deg,rgba(199,151,0,.34) 0 1px,rgba(255,255,255,.92) 1px 9px);
+      border-color:rgba(199,151,0,.34);
+    }
     .legend-text{flex:1;font-size:14px;font-weight:500;color:var(--navy-primary)}
     .legend-item {
   display: flex;
@@ -378,7 +382,6 @@
         <div class="legend-item">
           <div class="legend-text">
             We've reached students, coaches, and organizations in <span id="total-countries">0</span> countries.
-            <span class="disclaimer-note">* see disclaimer</span>
           </div>
         </div>
       </div>
@@ -399,6 +402,11 @@
         <div class="legend-item">
           <div class="legend-color active"></div>
           <div class="legend-text">1 program</div>
+        </div>
+
+        <div class="legend-item">
+          <div class="legend-color regional-support" id="regionalSupportLegendSwatch"></div>
+          <div class="legend-text">Regional Support</div>
         </div>
       </div>
       <div class ="legend-section">
@@ -432,7 +440,8 @@
 
       let programData = {}; // populated from /data/programData.json
 
-      const DISPLAYED_PROGRAMS = new Set(["BIG", "NATIONS", "EXCL"]);
+      const MAIN_PROGRAMS = new Set(["BIG", "NATIONS", "EXCL"]);
+      const REGIONAL_SUPPORT_PROGRAM = "REGIONAL";
 
       async function loadProgramData() {
             const res = await fetch("./data/programData.json", { cache: "no-store" });
@@ -443,7 +452,8 @@
                 country,
                 {
                   ...data,
-                  programs: (data.programs || []).filter((code) => DISPLAYED_PROGRAMS.has(code)),
+                  programs: (data.programs || []).filter((code) => MAIN_PROGRAMS.has(code)),
+                  regionalSupport: (data.programs || []).includes(REGIONAL_SUPPORT_PROGRAM),
                 },
               ])
             );
@@ -693,12 +703,65 @@
       return `rgba(${r},${g},${b},${alpha})`;
     }
 
+    const REGIONAL_SUPPORT_STYLE = {
+      tileSize: 24,
+      lineSpacing: 8,
+      lineWidth: 1.25,
+      lineColor: "rgba(199, 151, 0, 0.40)",
+      borderColor: "#D4D9DE",
+      borderWidth: 0.6,
+      legendBackgroundColor: "rgba(255, 255, 255, 0.92)",
+    };
+
+    function createRegionalSupportPattern() {
+      const canvas = document.createElement("canvas");
+      canvas.width = REGIONAL_SUPPORT_STYLE.tileSize;
+      canvas.height = REGIONAL_SUPPORT_STYLE.tileSize;
+      const ctx = canvas.getContext("2d");
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = REGIONAL_SUPPORT_STYLE.lineColor;
+      ctx.lineWidth = REGIONAL_SUPPORT_STYLE.lineWidth;
+      ctx.beginPath();
+      for (
+        let x = -REGIONAL_SUPPORT_STYLE.tileSize;
+        x <= REGIONAL_SUPPORT_STYLE.tileSize;
+        x += REGIONAL_SUPPORT_STYLE.lineSpacing
+      ) {
+        ctx.moveTo(x, REGIONAL_SUPPORT_STYLE.tileSize);
+        ctx.lineTo(x + REGIONAL_SUPPORT_STYLE.tileSize, 0);
+      }
+      ctx.stroke();
+      return ctx.createPattern(canvas, "repeat");
+    }
+
+    function applyRegionalSupportLegendStyle() {
+      const swatch = document.getElementById("regionalSupportLegendSwatch");
+      if (!swatch) return;
+
+      const lineWidth = REGIONAL_SUPPORT_STYLE.lineWidth;
+      const lineSpacing = REGIONAL_SUPPORT_STYLE.lineSpacing;
+      swatch.style.background = `repeating-linear-gradient(135deg, ${REGIONAL_SUPPORT_STYLE.lineColor} 0 ${lineWidth}px, ${REGIONAL_SUPPORT_STYLE.legendBackgroundColor} ${lineWidth}px ${lineSpacing}px)`;
+      swatch.style.borderColor = REGIONAL_SUPPORT_STYLE.borderColor;
+    }
+
+    applyRegionalSupportLegendStyle();
+
+    const regionalSupportPattern = createRegionalSupportPattern();
+    const regionalSupportStyle = new ol.style.Style({
+      fill: new ol.style.Fill({ color: regionalSupportPattern }),
+      stroke: new ol.style.Stroke({
+        color: REGIONAL_SUPPORT_STYLE.borderColor,
+        width: REGIONAL_SUPPORT_STYLE.borderWidth,
+      }),
+    });
+
     const countriesLayer = new ol.layer.Vector({
       source: countriesSource,
       style: (feature) => {
         const key = feature.get("countryKey");
         const level = feature.get("level"); // "elite" | "high" | "active" | "special" | null
         const programs = feature.get("programs") || [];
+        const regionalOnly = Boolean(feature.get("regionalSupport")) && programs.length === 0;
         const matchesSelectedProgram = selectedProgram ? programs.includes(selectedProgram) : true;
 
         // Paises sin datos: casi blanco
@@ -706,7 +769,9 @@
         let strokeColor = "#D4D9DE";
         let strokeWidth = 0.6;
 
-        if (level) {
+        if (regionalOnly) {
+          return regionalSupportStyle;
+        } else if (level) {
           // Same hue as the point markers applied to the fill.
           const base = levelColor(level);
           fillColor = hexToRgba(base, 0.85);
@@ -719,7 +784,7 @@
             fillColor = level ? hexToRgba(levelColor(level), 0.98) : "rgba(190,205,225,0.95)";
             strokeColor = "rgba(70,95,120,0.75)";
             strokeWidth = 1.1;
-          } else {
+          } else if (!regionalOnly) {
             fillColor = level ? hexToRgba(levelColor(level), 0.22) : "rgba(255,255,255,0.50)";
             strokeColor = "rgba(170,180,190,0.55)";
             strokeWidth = 0.5;
@@ -735,7 +800,7 @@
             }
           } else if (level) {
             fillColor = hexToRgba(levelColor(level), 0.97);
-          } else {
+          } else if (!regionalOnly) {
             fillColor = "rgba(210,220,235,0.95)";
           }
         }
@@ -862,10 +927,12 @@ Promise.all([
       if (d) {
         const programs = d.programs || [];
         f.set("programs", programs);
+        f.set("regionalSupport", Boolean(d.regionalSupport));
         f.set("bigScholars", d.bigScholars || null);
         f.set("level", levelFromPrograms(programs));
       } else {
         f.set("programs", []);
+        f.set("regionalSupport", false);
         f.set("bigScholars", null);
         f.set("level", null);
       }
@@ -1070,13 +1137,16 @@ Promise.all([
 
       const country = feat.get("countryKey");
       const programs = feat.get("programs") || [];
+      const regionalOnly = Boolean(feat.get("regionalSupport")) && programs.length === 0;
       const bigScholars = feat.get("bigScholars");
       const url = countryWebsites[country] || null;
+
+      if (regionalOnly) return;
 
       // Touch: tap shows tooltip (no accidental activation during pan, since pointermove is disabled)
       if (isTouchDevice) {
         // Optional: mimic your desktop rule (only show tooltip if it has data)
-        if (!programs.length) {
+        if (!programs.length || regionalOnly) {
           hideTooltip();
           return;
         }
@@ -1118,7 +1188,18 @@ Promise.all([
 
       const country = feat.get("countryKey");
       const programs = feat.get("programs") || [];
+      const regionalOnly = Boolean(feat.get("regionalSupport")) && programs.length === 0;
       const bigScholars = feat.get("bigScholars");
+
+      if (regionalOnly) {
+        mapTargetEl.style.cursor = "";
+        tooltipEl.style.display = "none";
+        if (hoveredCountryKey !== null) {
+          hoveredCountryKey = null;
+          countriesLayer.changed();
+        }
+        return;
+      }
 
       mapTargetEl.style.cursor = programs.length ? "pointer" : "";
 
@@ -1146,7 +1227,7 @@ Promise.all([
       const totalCountriesEl = document.getElementById("total-countries");
       if (totalCountriesEl) {
         const roundedCountries = Math.floor(Object.keys(programData).length / 10) * 10;
-        totalCountriesEl.textContent = `+${roundedCountries}`;
+        totalCountriesEl.textContent = `${roundedCountries}+`;
       }
     })();
 

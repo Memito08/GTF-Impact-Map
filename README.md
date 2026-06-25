@@ -22,7 +22,7 @@ GTF-Impact-Map/
 ├── process_data.py                   # Data processing script
 ├── requirements.txt                  # Python dependencies
 ├── data/
-│   ├── Program Data.xlsx             # Countries × programs matrix (source of truth)
+│   ├── program participation.csv     # Countries × programs matrix (source of truth)
 │   ├── GTF BIG Talent Scholars.xlsx  # BIG Scholars by country and year
 │   ├── country_websites.xlsx         # Country page URLs (globtalent.org)
 │   ├── country_codes.json            # ISO3 → country label mapping
@@ -33,7 +33,7 @@ GTF-Impact-Map/
 ## How data flows
 
 ```
-Program Data.xlsx  ─┐
+program participation.csv ─┐
                     ├─► process_data.py ─► data/programData.json ─► index.html
 GTF BIG Talent     ─┘
 Scholars.xlsx
@@ -45,7 +45,7 @@ Scholars.xlsx
 
 ### Adding or modifying program participation
 
-1. Open `data/Program Data.xlsx`
+1. Open `data/program participation.csv`
 2. Each row is a country. Columns `NATIONS` and `EXCL` use `1`/`0` to indicate participation
 3. Save the file
 4. Run the processing script (see below)
@@ -74,7 +74,7 @@ The script will:
 
 ### Country name matching
 
-Country names in the Excel files must match exactly the labels in `data/country_codes.json`. If a name doesn't match, the script will suggest the closest alternatives:
+Country names in the source files must match exactly the labels in `data/country_codes.json`. If a name doesn't match, the script will suggest the closest alternatives:
 
 ```
 ⚠️  1 country name(s) in programData.json have NO match in country_codes.json

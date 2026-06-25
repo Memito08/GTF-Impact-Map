@@ -13,6 +13,8 @@ import json
 import os
 from pathlib import Path
 
+PROGRAM_COLUMNS = ["NATIONS", "EXCL", "REGIONAL"]
+
 def normalize_country_name(country):
     """Normalize country names to match the standard format"""
     name_mapping = {
@@ -43,17 +45,16 @@ def load_program_data():
     """
     Load the program data file, containing the countries and the respective programs they are enrolled in.
     """
-    df = pd.read_excel(Path("data") / "Program Data.xlsx")
+    df = pd.read_csv(Path("data") / "program participation.csv")
 
     gtf_programs = {}
 
     for _, row in df.iterrows():
         country = normalize_country_name(row["Country"])
         country_programs = []
-        if row["NATIONS"] == 1:
-            country_programs.append("NATIONS")
-        if row["EXCL"] == 1:
-            country_programs.append("EXCL")
+        for program in PROGRAM_COLUMNS:
+            if program in df.columns and row[program] == 1:
+                country_programs.append(program)
 
         if country_programs:
             gtf_programs[country] = country_programs

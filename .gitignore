@@ -49,6 +49,10 @@ yarn.lock
 *.geojson.backup
 geographic_cache/
 
+# One-off regional support import files
+data/regional support.csv
+add_regional_to_program_participation.py
+
 # Personal configuration
 .env.local
 config.local.*
