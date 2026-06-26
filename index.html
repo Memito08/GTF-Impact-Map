@@ -77,7 +77,9 @@
     .legend-color.active{background:linear-gradient(135deg,var(--dot-active),#2563EB)}
     .legend-color.special{background:linear-gradient(135deg,var(--dot-special),#C2B11B)}
     .legend-color.regional-support{
-      background:repeating-linear-gradient(135deg,rgba(199,151,0,.34) 0 1px,rgba(255,255,255,.92) 1px 9px);
+      background:
+        repeating-linear-gradient(45deg,rgba(199,151,0,.34) 0 1px,transparent 1px 9px),
+        repeating-linear-gradient(135deg,rgba(199,151,0,.34) 0 1px,rgba(255,255,255,.92) 1px 9px);
       border-color:rgba(199,151,0,.34);
     }
     .legend-text{flex:1;font-size:14px;font-weight:500;color:var(--navy-primary)}
@@ -358,7 +360,7 @@
   <div class="map-app">
     <div id="map"></div>
     <div id="hkCallout" class="country-callout" aria-hidden="true">
-      <div class="country-callout-title">Hong Kong, China</div>
+      <div class="country-callout-title">Hong Kong SAR</div>
     </div>
     <div id="singaporeCallout" class="country-callout" aria-hidden="true">
       <div class="country-callout-title">Singapore</div>
@@ -705,9 +707,10 @@
 
     const REGIONAL_SUPPORT_STYLE = {
       tileSize: 24,
-      lineSpacing: 8,
+      lineSpacing: 12,
+      legendLineSpacing: 8,
       lineWidth: 1.25,
-      lineColor: "rgba(199, 151, 0, 0.40)",
+      lineColor: "rgba(199, 151, 0, 0.50)",
       borderColor: "#D4D9DE",
       borderWidth: 0.6,
       legendBackgroundColor: "rgba(255, 255, 255, 0.92)",
@@ -722,13 +725,17 @@
       ctx.strokeStyle = REGIONAL_SUPPORT_STYLE.lineColor;
       ctx.lineWidth = REGIONAL_SUPPORT_STYLE.lineWidth;
       ctx.beginPath();
-      for (
-        let x = -REGIONAL_SUPPORT_STYLE.tileSize;
-        x <= REGIONAL_SUPPORT_STYLE.tileSize;
-        x += REGIONAL_SUPPORT_STYLE.lineSpacing
-      ) {
-        ctx.moveTo(x, REGIONAL_SUPPORT_STYLE.tileSize);
-        ctx.lineTo(x + REGIONAL_SUPPORT_STYLE.tileSize, 0);
+      const size = REGIONAL_SUPPORT_STYLE.tileSize;
+      const spacing = REGIONAL_SUPPORT_STYLE.lineSpacing;
+      // Lines going top-left to bottom-right (45°)
+      for (let x = -size; x <= size; x += spacing) {
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x + size, size);
+      }
+      // Lines going top-right to bottom-left (135°)
+      for (let x = -size; x <= size; x += spacing) {
+        ctx.moveTo(x + size, 0);
+        ctx.lineTo(x, size);
       }
       ctx.stroke();
       return ctx.createPattern(canvas, "repeat");
@@ -739,21 +746,29 @@
       if (!swatch) return;
 
       const lineWidth = REGIONAL_SUPPORT_STYLE.lineWidth;
-      const lineSpacing = REGIONAL_SUPPORT_STYLE.lineSpacing;
-      swatch.style.background = `repeating-linear-gradient(135deg, ${REGIONAL_SUPPORT_STYLE.lineColor} 0 ${lineWidth}px, ${REGIONAL_SUPPORT_STYLE.legendBackgroundColor} ${lineWidth}px ${lineSpacing}px)`;
+      const lineSpacing = REGIONAL_SUPPORT_STYLE.legendLineSpacing ?? REGIONAL_SUPPORT_STYLE.lineSpacing;
+      swatch.style.background = [
+        `repeating-linear-gradient(45deg, ${REGIONAL_SUPPORT_STYLE.lineColor} 0 ${lineWidth}px, transparent ${lineWidth}px ${lineSpacing}px)`,
+        `repeating-linear-gradient(135deg, ${REGIONAL_SUPPORT_STYLE.lineColor} 0 ${lineWidth}px, ${REGIONAL_SUPPORT_STYLE.legendBackgroundColor} ${lineWidth}px ${lineSpacing}px)`,
+      ].join(", ");
       swatch.style.borderColor = REGIONAL_SUPPORT_STYLE.borderColor;
     }
 
     applyRegionalSupportLegendStyle();
 
     const regionalSupportPattern = createRegionalSupportPattern();
-    const regionalSupportStyle = new ol.style.Style({
-      fill: new ol.style.Fill({ color: regionalSupportPattern }),
-      stroke: new ol.style.Stroke({
-        color: REGIONAL_SUPPORT_STYLE.borderColor,
-        width: REGIONAL_SUPPORT_STYLE.borderWidth,
+    const regionalSupportStyle = [
+      new ol.style.Style({
+        fill: new ol.style.Fill({ color: "rgba(255,255,255,0.95)" }),
+        stroke: new ol.style.Stroke({
+          color: REGIONAL_SUPPORT_STYLE.borderColor,
+          width: REGIONAL_SUPPORT_STYLE.borderWidth,
+        }),
       }),
-    });
+      new ol.style.Style({
+        fill: new ol.style.Fill({ color: regionalSupportPattern }),
+      }),
+    ];
 
     const countriesLayer = new ol.layer.Vector({
       source: countriesSource,
@@ -1008,7 +1023,7 @@ Promise.all([
     const hkCalloutEl = document.getElementById("hkCallout");
     const singaporeCalloutEl = document.getElementById("singaporeCallout");
     const programFilterButtons = Array.from(document.querySelectorAll(".program-filter-btn"));
-    const HONG_KONG_KEY = "Hong Kong, China";
+    const HONG_KONG_KEY = "Hong Kong SAR";
     const SINGAPORE_KEY = "Singapore";
     const countryCallouts = [
       { element: hkCalloutEl, countryKey: HONG_KONG_KEY },

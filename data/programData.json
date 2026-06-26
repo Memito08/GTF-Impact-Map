@@ -1,30 +1,125 @@
 {
-  "Uganda": {
+  "Montenegro": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Costa Rica": {
+    "programs": [
+      "BIG",
+      "NATIONS",
+      "EXCL",
+      "REGIONAL"
+    ],
+    "bigScholars": {
+      "2024": [
+        "Gabriel Najmias"
+      ]
+    }
+  },
+  "United States of America": {
+    "programs": [
+      "EXCL",
+      "REGIONAL"
+    ]
+  },
+  "Israel": {
     "programs": [
       "NATIONS",
       "REGIONAL"
     ]
   },
-  "Ukraine": {
+  "Moldova": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Cameroon": {
+    "programs": [
+      "NATIONS",
+      "EXCL",
+      "REGIONAL"
+    ]
+  },
+  "United Arab Emirates": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Qatar": {
+    "programs": [
+      "EXCL"
+    ]
+  },
+  "Puerto Rico": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Senegal": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Nigeria": {
+    "programs": [
+      "NATIONS",
+      "EXCL",
+      "REGIONAL"
+    ]
+  },
+  "Paraguay": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Australia": {
     "programs": [
       "BIG",
       "REGIONAL"
     ],
     "bigScholars": {
       "2025": [
-        "Stepan Semyrenskyi",
-        "Oles Hordiichuk",
-        "Daniil Shvaiko",
-        "Ihnat Zharikhin",
-        "Kseniia Drozdova"
+        "Andy Wu"
       ],
       "2024": [
-        "Ivan Bortnovskyi",
-        "Volodymyr Chub",
-        "Yevheniia Frankevych",
-        "Alisa Potomkina"
+        "Arthur Sun"
       ]
     }
+  },
+  "Italy": {
+    "programs": [
+      "NATIONS",
+      "REGIONAL"
+    ]
+  },
+  "Eswatini": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Argentina": {
+    "programs": [
+      "NATIONS",
+      "REGIONAL"
+    ]
+  },
+  "Morocco": {
+    "programs": [
+      "NATIONS",
+      "EXCL",
+      "REGIONAL"
+    ]
+  },
+  "Panama": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Estonia": {
+    "programs": [
+      "REGIONAL"
+    ]
   },
   "Mongolia": {
     "programs": [
@@ -39,41 +134,108 @@
       ]
     }
   },
-  "Lesotho": {
+  "Serbia": {
+    "programs": [
+      "BIG",
+      "REGIONAL"
+    ],
+    "bigScholars": {
+      "2025": [
+        "Janko Popovic",
+        "Novak Despotovic",
+        "Vladimir Brankovic",
+        "Neda Zivanovic"
+      ],
+      "2024": [
+        "Gvozden Lapcevic"
+      ]
+    }
+  },
+  "China, People's Republic of": {
     "programs": [
       "REGIONAL"
     ]
   },
-  "Albania": {
+  "Macao SAR": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Spain": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Russian Federation": {
     "programs": [
       "EXCL",
       "REGIONAL"
     ]
   },
-  "Mauritius": {
+  "Niger": {
     "programs": [
       "REGIONAL"
     ]
   },
-  "Pakistan": {
+  "North Macedonia": {
     "programs": [
-      "NATIONS"
-    ]
+      "BIG",
+      "REGIONAL"
+    ],
+    "bigScholars": {
+      "2025": [
+        "Aleksij Tasikj"
+      ]
+    }
   },
-  "Honduras": {
+  "Indonesia": {
+    "programs": [
+      "BIG",
+      "REGIONAL"
+    ],
+    "bigScholars": {
+      "2025": [
+        "Kevin Adi Senjaya"
+      ]
+    }
+  },
+  "Switzerland": {
     "programs": [
       "EXCL",
       "REGIONAL"
     ]
   },
-  "Italy": {
+  "Ethiopia": {
     "programs": [
       "NATIONS",
+      "EXCL",
       "REGIONAL"
     ]
   },
-  "Portugal": {
+  "Egypt": {
     "programs": [
+      "EXCL",
+      "REGIONAL"
+    ]
+  },
+  "Iceland": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Bangladesh": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Burkina Faso": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Guatemala": {
+    "programs": [
+      "EXCL",
       "REGIONAL"
     ]
   },
@@ -84,7 +246,89 @@
       "REGIONAL"
     ]
   },
-  "Kazakhstan": {
+  "Canada": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Romania": {
+    "programs": [
+      "BIG",
+      "REGIONAL"
+    ],
+    "bigScholars": {
+      "2025": [
+        "Pavel Ciurea"
+      ],
+      "2024": [
+        "Andrei Chirita",
+        "Alexandru Momoiu",
+        "Vlad-Titus Spataru",
+        "Mara Ioana Zaharia"
+      ]
+    }
+  },
+  "Malawi": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Austria": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Czech Republic": {
+    "programs": [
+      "BIG",
+      "REGIONAL"
+    ],
+    "bigScholars": {
+      "2025": [
+        "Martin Kudrna"
+      ]
+    }
+  },
+  "Uganda": {
+    "programs": [
+      "NATIONS",
+      "REGIONAL"
+    ]
+  },
+  "New Zealand": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Cyprus": {
+    "programs": [
+      "BIG",
+      "REGIONAL"
+    ],
+    "bigScholars": {
+      "2025": [
+        "Filippos Athos Chatzichristofi"
+      ]
+    }
+  },
+  "Sri Lanka": {
+    "programs": [
+      "NATIONS",
+      "REGIONAL"
+    ]
+  },
+  "Belarus": {
+    "programs": [
+      "BIG",
+      "REGIONAL"
+    ],
+    "bigScholars": {
+      "2025": [
+        "Mikhail Raikhman"
+      ]
+    }
+  },
+  "Bosnia and Herzegovina": {
     "programs": [
       "BIG",
       "NATIONS",
@@ -92,31 +336,43 @@
     ],
     "bigScholars": {
       "2025": [
-        "Amir Pshenbayev",
-        "Miron Yurkevich",
-        "Nazar Serazitdinov",
-        "Vladimir Rogovskiy"
+        "Faruk Ibrahimovic"
+      ],
+      "2024": [
+        "Asja Catic",
+        "Ilma Celjo",
+        "Naida Gavranovic",
+        "Emina Hasanbegovic",
+        "Ervin Macic"
       ]
     }
   },
-  "Tunisia": {
+  "Taiwan Province of China": {
     "programs": [
-      "BIG",
-      "NATIONS",
-      "EXCL",
       "REGIONAL"
-    ],
-    "bigScholars": {
-      "2025": [
-        "Mohamed Yassine Chebil"
-      ]
-    }
+    ]
   },
-  "Cuba": {
+  "Uzbekistan": {
     "programs": [
+      "NATIONS",
       "EXCL",
       "REGIONAL"
     ]
+  },
+  "Brazil": {
+    "programs": [
+      "BIG",
+      "NATIONS",
+      "REGIONAL"
+    ],
+    "bigScholars": {
+      "2025": [
+        "Leonardo Henrique Fakhreddine Maldonado"
+      ],
+      "2024": [
+        "Bilhana Kochloukova"
+      ]
+    }
   },
   "El Salvador": {
     "programs": [
@@ -130,76 +386,119 @@
       ]
     }
   },
-  "Sri Lanka": {
+  "Luxembourg": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Lesotho": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Mexico": {
     "programs": [
       "NATIONS",
       "REGIONAL"
     ]
   },
-  "Nicaragua": {
-    "programs": [
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "Turkmenistan": {
+  "Libya": {
     "programs": [
       "REGIONAL"
     ]
   },
-  "Morocco": {
+  "Philippines": {
+    "programs": [
+      "NATIONS",
+      "EXCL"
+    ]
+  },
+  "Jordan": {
+    "programs": [
+      "NATIONS"
+    ]
+  },
+  "Malaysia": {
     "programs": [
       "NATIONS",
       "EXCL",
       "REGIONAL"
     ]
   },
-  "Finland": {
+  "Armenia": {
+    "programs": [
+      "NATIONS",
+      "EXCL",
+      "REGIONAL"
+    ]
+  },
+  "Togo": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Albania": {
+    "programs": [
+      "EXCL",
+      "REGIONAL"
+    ]
+  },
+  "South Sudan, Republic of": {
+    "programs": [
+      "EXCL",
+      "REGIONAL"
+    ]
+  },
+  "Greece": {
     "programs": [
       "BIG",
       "REGIONAL"
     ],
     "bigScholars": {
       "2025": [
-        "Aino Aulanko"
+        "Sokratis Iliadis"
       ]
     }
   },
-  "Croatia": {
+  "Iran": {
     "programs": [
-      "BIG",
-      "REGIONAL"
+      "BIG"
     ],
     "bigScholars": {
       "2025": [
-        "Val Karan"
+        "Parsa Saberi"
       ]
     }
   },
-  "Macao SAR": {
+  "Dominican Republic": {
+    "programs": [
+      "EXCL",
+      "REGIONAL"
+    ]
+  },
+  "Portugal": {
     "programs": [
       "REGIONAL"
+    ]
+  },
+  "Slovenia": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Bolivia": {
+    "programs": [
+      "NATIONS",
+      "EXCL",
+      "REGIONAL"
+    ]
+  },
+  "West Bank and Gaza": {
+    "programs": [
+      "EXCL"
     ]
   },
   "Djibouti": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Botswana": {
-    "programs": [
-      "NATIONS",
-      "REGIONAL"
-    ]
-  },
-  "Mauritania": {
-    "programs": [
-      "NATIONS",
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "Côte d'Ivoire": {
     "programs": [
       "REGIONAL"
     ]
@@ -222,166 +521,35 @@
       ]
     }
   },
-  "Ethiopia": {
-    "programs": [
-      "NATIONS",
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "Kyrgyz Republic": {
-    "programs": [
-      "NATIONS",
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "Armenia": {
-    "programs": [
-      "NATIONS",
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "Norway": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "China, People's Republic of": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Türkiye, Republic of": {
+  "Finland": {
     "programs": [
       "BIG",
-      "EXCL",
       "REGIONAL"
     ],
     "bigScholars": {
       "2025": [
-        "Deniz Can Karacelebi",
-        "Alp Terliksiz"
+        "Aino Aulanko"
+      ]
+    }
+  },
+  "Latvia": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Hong Kong SAR": {
+    "programs": [
+      "BIG",
+      "REGIONAL"
+    ],
+    "bigScholars": {
+      "2025": [
+        "Hanks Chong"
       ],
       "2024": [
-        "Cagan Ahmet Yanmaz"
+        "Clement Hui"
       ]
     }
-  },
-  "Congo, Republic of": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Bosnia and Herzegovina": {
-    "programs": [
-      "BIG",
-      "NATIONS",
-      "REGIONAL"
-    ],
-    "bigScholars": {
-      "2025": [
-        "Faruk Ibrahimovic"
-      ],
-      "2024": [
-        "Asja Catic",
-        "Ilma Celjo",
-        "Naida Gavranovic",
-        "Emina Hasanbegovic",
-        "Ervin Macic"
-      ]
-    }
-  },
-  "Benin": {
-    "programs": [
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "Montenegro": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Puerto Rico": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Netherlands": {
-    "programs": [
-      "BIG",
-      "EXCL",
-      "REGIONAL"
-    ],
-    "bigScholars": {
-      "2025": [
-        "Casper Heimel"
-      ]
-    }
-  },
-  "Cyprus": {
-    "programs": [
-      "BIG",
-      "REGIONAL"
-    ],
-    "bigScholars": {
-      "2025": [
-        "Filippos Athos Chatzichristofi"
-      ]
-    }
-  },
-  "Australia": {
-    "programs": [
-      "BIG",
-      "REGIONAL"
-    ],
-    "bigScholars": {
-      "2025": [
-        "Andy Wu"
-      ],
-      "2024": [
-        "Arthur Sun"
-      ]
-    }
-  },
-  "Switzerland": {
-    "programs": [
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "Estonia": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Senegal": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Saudi Arabia": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Panama": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Ghana": {
-    "programs": [
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "Sierra Leone": {
-    "programs": [
-      "REGIONAL"
-    ]
   },
   "India": {
     "programs": [
@@ -402,64 +570,52 @@
       ]
     }
   },
-  "Iran": {
-    "programs": [
-      "BIG"
-    ],
-    "bigScholars": {
-      "2025": [
-        "Parsa Saberi"
-      ]
-    }
-  },
-  "Georgia": {
-    "programs": [
-      "NATIONS",
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "United Arab Emirates": {
+  "Sierra Leone": {
     "programs": [
       "REGIONAL"
     ]
   },
-  "Congo, Dem. Rep. of the": {
-    "programs": [
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "Belarus": {
+  "Türkiye, Republic of": {
     "programs": [
       "BIG",
+      "EXCL",
       "REGIONAL"
     ],
     "bigScholars": {
       "2025": [
-        "Mikhail Raikhman"
-      ]
-    }
-  },
-  "Sweden": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Brazil": {
-    "programs": [
-      "BIG",
-      "NATIONS",
-      "REGIONAL"
-    ],
-    "bigScholars": {
-      "2025": [
-        "Leonardo Henrique Fakhreddine Maldonado"
+        "Deniz Can Karacelebi",
+        "Alp Terliksiz"
       ],
       "2024": [
-        "Bilhana Kochloukova"
+        "Cagan Ahmet Yanmaz"
       ]
     }
+  },
+  "Ukraine": {
+    "programs": [
+      "BIG",
+      "REGIONAL"
+    ],
+    "bigScholars": {
+      "2025": [
+        "Stepan Semyrenskyi",
+        "Oles Hordiichuk",
+        "Daniil Shvaiko",
+        "Ihnat Zharikhin",
+        "Kseniia Drozdova"
+      ],
+      "2024": [
+        "Ivan Bortnovskyi",
+        "Volodymyr Chub",
+        "Yevheniia Frankevych",
+        "Alisa Potomkina"
+      ]
+    }
+  },
+  "Burundi": {
+    "programs": [
+      "REGIONAL"
+    ]
   },
   "France": {
     "programs": [
@@ -467,255 +623,35 @@
       "REGIONAL"
     ]
   },
-  "Slovak Republic": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Zimbabwe": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Latvia": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Bangladesh": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Belgium": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Malawi": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Libya": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Guatemala": {
+  "Cuba": {
     "programs": [
       "EXCL",
       "REGIONAL"
     ]
   },
-  "Mali": {
+  "Turkmenistan": {
     "programs": [
       "REGIONAL"
     ]
   },
-  "Nigeria": {
-    "programs": [
-      "NATIONS",
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "Romania": {
+  "Poland": {
     "programs": [
       "BIG",
       "REGIONAL"
     ],
     "bigScholars": {
       "2025": [
-        "Pavel Ciurea"
-      ],
-      "2024": [
-        "Andrei Chirita",
-        "Alexandru Momoiu",
-        "Vlad-Titus Spataru",
-        "Mara Ioana Zaharia"
+        "Magdalena Pudelko",
+        "Mateusz Wawrzyniak"
       ]
     }
   },
-  "South Africa": {
+  "Lithuania": {
     "programs": [
       "NATIONS",
       "EXCL",
       "REGIONAL"
     ]
-  },
-  "Ireland": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Cameroon": {
-    "programs": [
-      "NATIONS",
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "Venezuela": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "New Zealand": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Myanmar": {
-    "programs": [
-      "EXCL"
-    ]
-  },
-  "Burkina Faso": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Japan": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Algeria": {
-    "programs": [
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "Kosovo": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Eswatini": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Jordan": {
-    "programs": [
-      "NATIONS"
-    ]
-  },
-  "Chile": {
-    "programs": [
-      "NATIONS",
-      "REGIONAL"
-    ]
-  },
-  "Mexico": {
-    "programs": [
-      "NATIONS",
-      "REGIONAL"
-    ]
-  },
-  "Indonesia": {
-    "programs": [
-      "BIG",
-      "REGIONAL"
-    ],
-    "bigScholars": {
-      "2025": [
-        "Kevin Adi Senjaya"
-      ]
-    }
-  },
-  "Uruguay": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Azerbaijan": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Tanzania": {
-    "programs": [
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "Czech Republic": {
-    "programs": [
-      "BIG",
-      "REGIONAL"
-    ],
-    "bigScholars": {
-      "2025": [
-        "Martin Kudrna"
-      ]
-    }
-  },
-  "Mozambique": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Tajikistan": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Uzbekistan": {
-    "programs": [
-      "NATIONS",
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "Denmark": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Ecuador": {
-    "programs": [
-      "NATIONS",
-      "REGIONAL"
-    ]
-  },
-  "South Sudan, Republic of": {
-    "programs": [
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "Argentina": {
-    "programs": [
-      "NATIONS",
-      "REGIONAL"
-    ]
-  },
-  "Rwanda": {
-    "programs": [
-      "NATIONS",
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "Kenya": {
-    "programs": [
-      "NATIONS",
-      "EXCL",
-      "REGIONAL"
-    ]
-  },
-  "Greece": {
-    "programs": [
-      "BIG",
-      "REGIONAL"
-    ],
-    "bigScholars": {
-      "2025": [
-        "Sokratis Iliadis"
-      ]
-    }
   },
   "United Kingdom": {
     "programs": [
@@ -734,176 +670,184 @@
       ]
     }
   },
-  "Bolivia": {
+  "Chile": {
+    "programs": [
+      "NATIONS",
+      "REGIONAL"
+    ]
+  },
+  "Mauritania": {
     "programs": [
       "NATIONS",
       "EXCL",
       "REGIONAL"
     ]
   },
-  "Dominican Republic": {
+  "Colombia": {
     "programs": [
       "EXCL",
       "REGIONAL"
     ]
   },
-  "Egypt": {
+  "Algeria": {
     "programs": [
       "EXCL",
       "REGIONAL"
     ]
   },
-  "Russian Federation": {
+  "Côte d'Ivoire": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Slovak Republic": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Tanzania": {
     "programs": [
       "EXCL",
       "REGIONAL"
     ]
   },
-  "Poland": {
+  "Mauritius": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Kazakhstan": {
     "programs": [
       "BIG",
+      "NATIONS",
       "REGIONAL"
     ],
     "bigScholars": {
       "2025": [
-        "Magdalena Pudelko",
-        "Mateusz Wawrzyniak"
+        "Amir Pshenbayev",
+        "Miron Yurkevich",
+        "Nazar Serazitdinov",
+        "Vladimir Rogovskiy"
       ]
     }
   },
-  "West Bank and Gaza": {
+  "Congo, Dem. Rep. of the": {
     "programs": [
-      "EXCL"
+      "EXCL",
+      "REGIONAL"
     ]
   },
-  "Iceland": {
+  "Zimbabwe": {
     "programs": [
       "REGIONAL"
     ]
   },
-  "Slovenia": {
+  "Mali": {
     "programs": [
       "REGIONAL"
     ]
   },
-  "Canada": {
+  "Azerbaijan": {
     "programs": [
       "REGIONAL"
     ]
   },
-  "Malaysia": {
+  "Netherlands": {
+    "programs": [
+      "BIG",
+      "EXCL",
+      "REGIONAL"
+    ],
+    "bigScholars": {
+      "2025": [
+        "Casper Heimel"
+      ]
+    }
+  },
+  "Ireland": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Kyrgyz Republic": {
     "programs": [
       "NATIONS",
       "EXCL",
       "REGIONAL"
     ]
   },
-  "Spain": {
+  "Kenya": {
+    "programs": [
+      "NATIONS",
+      "EXCL",
+      "REGIONAL"
+    ]
+  },
+  "Congo, Republic of": {
     "programs": [
       "REGIONAL"
     ]
   },
-  "Paraguay": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Moldova": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Niger": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Hong Kong, China": {
+  "Germany": {
     "programs": [
       "BIG",
       "REGIONAL"
     ],
     "bigScholars": {
       "2025": [
-        "Hanks Chong"
+        "Tina Ding"
       ],
       "2024": [
-        "Clement Hui"
+        "Dmitrii Galatenko",
+        "Vera Lavrova"
       ]
     }
   },
-  "Gambia, The": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Lithuania": {
+  "Rwanda": {
     "programs": [
       "NATIONS",
       "EXCL",
       "REGIONAL"
     ]
   },
-  "Togo": {
+  "Kosovo": {
     "programs": [
       "REGIONAL"
     ]
   },
-  "Serbia": {
+  "Tajikistan": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Tunisia": {
     "programs": [
       "BIG",
-      "REGIONAL"
-    ],
-    "bigScholars": {
-      "2025": [
-        "Janko Popovic",
-        "Novak Despotovic",
-        "Vladimir Brankovic",
-        "Neda Zivanovic"
-      ],
-      "2024": [
-        "Gvozden Lapcevic"
-      ]
-    }
-  },
-  "North Macedonia": {
-    "programs": [
-      "BIG",
-      "REGIONAL"
-    ],
-    "bigScholars": {
-      "2025": [
-        "Aleksij Tasikj"
-      ]
-    }
-  },
-  "Peru": {
-    "programs": [
+      "NATIONS",
       "EXCL",
       "REGIONAL"
-    ]
+    ],
+    "bigScholars": {
+      "2025": [
+        "Mohamed Yassine Chebil"
+      ]
+    }
   },
-  "Israel": {
+  "Croatia": {
+    "programs": [
+      "BIG",
+      "REGIONAL"
+    ],
+    "bigScholars": {
+      "2025": [
+        "Val Karan"
+      ]
+    }
+  },
+  "Ecuador": {
     "programs": [
       "NATIONS",
       "REGIONAL"
-    ]
-  },
-  "Philippines": {
-    "programs": [
-      "NATIONS",
-      "EXCL"
-    ]
-  },
-  "Taiwan Province of China": {
-    "programs": [
-      "REGIONAL"
-    ]
-  },
-  "Bhutan": {
-    "programs": [
-      "NATIONS",
-      "EXCL"
     ]
   },
   "Singapore": {
@@ -917,31 +861,87 @@
       ]
     }
   },
-  "Costa Rica": {
+  "Gambia, The": {
     "programs": [
-      "BIG",
+      "REGIONAL"
+    ]
+  },
+  "Nicaragua": {
+    "programs": [
+      "EXCL",
+      "REGIONAL"
+    ]
+  },
+  "Benin": {
+    "programs": [
+      "EXCL",
+      "REGIONAL"
+    ]
+  },
+  "Bhutan": {
+    "programs": [
+      "NATIONS",
+      "EXCL"
+    ]
+  },
+  "Uruguay": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Venezuela": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Honduras": {
+    "programs": [
+      "EXCL",
+      "REGIONAL"
+    ]
+  },
+  "Ghana": {
+    "programs": [
+      "EXCL",
+      "REGIONAL"
+    ]
+  },
+  "Sweden": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Denmark": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "South Africa": {
+    "programs": [
       "NATIONS",
       "EXCL",
       "REGIONAL"
-    ],
-    "bigScholars": {
-      "2024": [
-        "Gabriel Najmias"
-      ]
-    }
+    ]
   },
-  "Austria": {
+  "Norway": {
     "programs": [
       "REGIONAL"
     ]
   },
-  "Luxembourg": {
+  "Botswana": {
+    "programs": [
+      "NATIONS",
+      "REGIONAL"
+    ]
+  },
+  "Saudi Arabia": {
     "programs": [
       "REGIONAL"
     ]
   },
-  "United States of America": {
+  "Georgia": {
     "programs": [
+      "NATIONS",
       "EXCL",
       "REGIONAL"
     ]
@@ -962,33 +962,33 @@
       ]
     }
   },
-  "Qatar": {
+  "Belgium": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Pakistan": {
+    "programs": [
+      "NATIONS"
+    ]
+  },
+  "Myanmar": {
     "programs": [
       "EXCL"
     ]
   },
-  "Germany": {
-    "programs": [
-      "BIG",
-      "REGIONAL"
-    ],
-    "bigScholars": {
-      "2025": [
-        "Tina Ding"
-      ],
-      "2024": [
-        "Dmitrii Galatenko",
-        "Vera Lavrova"
-      ]
-    }
-  },
-  "Colombia": {
+  "Peru": {
     "programs": [
       "EXCL",
       "REGIONAL"
     ]
   },
-  "Burundi": {
+  "Japan": {
+    "programs": [
+      "REGIONAL"
+    ]
+  },
+  "Mozambique": {
     "programs": [
       "REGIONAL"
     ]
