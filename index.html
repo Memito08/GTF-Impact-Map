@@ -139,6 +139,7 @@
     .popup-program{padding:2px 6px;border-radius:10px;font-size:10px;font-weight:600;color:var(--warm-white)}
     .popup-program.nations{background:var(--burnt-orange);color:var(--navy-primary)}
     .popup-program.big{background:var(--deep-violet)} .popup-program.excl{background:var(--olive-brown);color:var(--navy-primary)}
+    .popup-program.regional-support-tooltip{background:rgba(168,126,0,.14);color:var(--navy-primary)}
     .big-scholars-section{margin-top:10px;padding-top:8px;border-top:1px solid var(--border-light)}
     .big-scholars-title{font-size:12px;font-weight:600;color:var(--accent-blue);margin-bottom:6px}
     .year-group{margin-bottom:6px}.year-label{font-size:11px;font-weight:700;color:var(--navy-secondary);margin-bottom:3px}
@@ -201,6 +202,7 @@
     .hover-tooltip .popup-program.nations { background: var(--burnt-orange); color: var(--navy-primary); }
     .hover-tooltip .popup-program.big { background: var(--deep-violet); }
     .hover-tooltip .popup-program.excl { background: var(--olive-brown); color: var(--navy-primary); }
+    .hover-tooltip .popup-program.regional-support-tooltip { background: rgba(168,126,0,.14); color: var(--navy-primary); }
     .hover-tooltip .big-scholars-section {
       margin-top: 10px;
       padding-top: 8px;
@@ -262,6 +264,9 @@
     }
 
     .country-callout {
+      --callout-pointer-y: 50%;
+      --callout-connector-angle: 0deg;
+      --callout-connector-length: 10px;
       position: absolute;
       display: none;
       min-width: 0;
@@ -280,17 +285,18 @@
     .country-callout::before {
       content: "";
       position: absolute;
-      top: 50%;
+      top: var(--callout-pointer-y);
       left: -14px;
-      width: 10px;
+      width: var(--callout-connector-length);
       height: 1px;
       background: rgba(44,74,90,.5);
-      transform: translateY(-50%);
+      transform: translateY(-50%) rotate(var(--callout-connector-angle));
+      transform-origin: left center;
     }
     .country-callout::after {
       content: "";
       position: absolute;
-      top: 50%;
+      top: var(--callout-pointer-y);
       left: -18px;
       width: 5px;
       height: 5px;
@@ -408,7 +414,7 @@
 
         <div class="legend-item">
           <div class="legend-color regional-support" id="regionalSupportLegendSwatch"></div>
-          <div class="legend-text">Regional Support</div>
+          <div class="legend-text">Regional support</div>
         </div>
       </div>
       <div class ="legend-section">
@@ -433,6 +439,9 @@
         <div class="legend-disclaimer">
           * Map boundaries are from the
           <a href="https://www.imf.org/external/datamapper/NGDP_RPCH@WEO/OEMDC/ADVEC/WEOWORLD" target="_blank" rel="noopener noreferrer">IMF</a>, a specialized agency of the United Nations. Global Talent Fund accepts no liability for omissions or errors in the data. The boundaries, colors, denominations, and any other information shown on the maps do not imply, on the part of GTF, any judgment on the legal status of any territory or any endorsement or acceptance of such boundaries.
+        </div>
+        <div class="legend-disclaimer" style="margin-top:10px;">
+          Winkel Tripel projection
         </div>
       </div>
     </div>
@@ -685,6 +694,15 @@
         ${chips}
         ${bigSection}
         ${learnMore}
+      `;
+    }
+
+    function regionalSupportTooltipHTML(country) {
+      return `
+        <div class="popup-title">${country}</div>
+        <div class="popup-programs">
+          <span class="popup-program regional-support-tooltip">Regional support</span>
+        </div>
       `;
     }
 
@@ -1026,7 +1044,7 @@ Promise.all([
     const HONG_KONG_KEY = "Hong Kong SAR";
     const SINGAPORE_KEY = "Singapore";
     const countryCallouts = [
-      { element: hkCalloutEl, countryKey: HONG_KONG_KEY },
+      { element: hkCalloutEl, countryKey: HONG_KONG_KEY, boxOffsetY: 16 },
       { element: singaporeCalloutEl, countryKey: SINGAPORE_KEY },
     ];
 
@@ -1039,7 +1057,7 @@ Promise.all([
       tooltipEl.style.display = "none";
     }
 
-    function renderCountryCallout({ element, countryKey }) {
+    function renderCountryCallout({ element, countryKey, boxOffsetY = 0 }) {
       if (!element) return;
 
       const feature = countriesSource
@@ -1067,9 +1085,15 @@ Promise.all([
 
       const calloutOffsetX = window.innerWidth <= 768 ? 14 : 18;
       const calloutOffsetY = window.innerWidth <= 768 ? -10 : -12;
+      const connectorRun = 14;
+      const connectorLength = Math.hypot(connectorRun, boxOffsetY);
+      const connectorAngle = Math.atan2(boxOffsetY, connectorRun) * (180 / Math.PI);
 
       element.style.left = `${anchorPixel[0] + calloutOffsetX}px`;
-      element.style.top = `${anchorPixel[1] + calloutOffsetY}px`;
+      element.style.top = `${anchorPixel[1] + calloutOffsetY + boxOffsetY}px`;
+      element.style.setProperty("--callout-pointer-y", `calc(50% - ${boxOffsetY}px)`);
+      element.style.setProperty("--callout-connector-angle", `${connectorAngle}deg`);
+      element.style.setProperty("--callout-connector-length", `${connectorLength}px`);
       element.style.display = "block";
       element.classList.toggle("linkable", Boolean(countryWebsites[countryKey]));
     }
@@ -1156,7 +1180,16 @@ Promise.all([
       const bigScholars = feat.get("bigScholars");
       const url = countryWebsites[country] || null;
 
-      if (regionalOnly) return;
+      if (regionalOnly) {
+        if (isTouchDevice) {
+          hoveredCountryKey = country;
+          countriesLayer.changed();
+          tooltipEl.innerHTML = regionalSupportTooltipHTML(country);
+          tooltipEl.style.display = "block";
+          setTooltipPosition(tooltipEl, mapTargetEl, evt.pixel);
+        }
+        return;
+      }
 
       // Touch: tap shows tooltip (no accidental activation during pan, since pointermove is disabled)
       if (isTouchDevice) {
@@ -1206,22 +1239,19 @@ Promise.all([
       const regionalOnly = Boolean(feat.get("regionalSupport")) && programs.length === 0;
       const bigScholars = feat.get("bigScholars");
 
-      if (regionalOnly) {
-        mapTargetEl.style.cursor = "";
-        tooltipEl.style.display = "none";
-        if (hoveredCountryKey !== null) {
-          hoveredCountryKey = null;
-          countriesLayer.changed();
-        }
-        return;
-      }
-
       mapTargetEl.style.cursor = programs.length ? "pointer" : "";
 
       // highlight
       if (hoveredCountryKey !== country) {
         hoveredCountryKey = country;
         countriesLayer.changed(); // force style re-render
+      }
+
+      if (regionalOnly) {
+        tooltipEl.innerHTML = regionalSupportTooltipHTML(country);
+        tooltipEl.style.display = "block";
+        setTooltipPosition(tooltipEl, mapTargetEl, evt.pixel);
+        return;
       }
 
       // tooltip (only if the country has programs; remove the if to always show)
